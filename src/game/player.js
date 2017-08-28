@@ -74,7 +74,7 @@ function Player(){
         }
 
         if(this.down.isDown){
-            game.world.minning(this.player);
+            game.world.mining(this.player);
         }
 
         // if(this.jumpButton.isDown && this.player.body.onFloor() && engine.game.time.now > this.jumpTimer){

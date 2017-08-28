@@ -16,12 +16,16 @@ function World(){
 
         const caca = w;
 
+        this.blocks = Create2DArray(w) ;
+
         var data = '';
-        for (var y = 0; y < height; y++)
-        {
-            for (var x = 0; x < caca; x++)
-            {
-                data += generateTile(x, y);
+        for (var y = 0; y < height; y++) {
+
+            for (var x = 0; x < caca; x++) {
+                var block = generateTile(x, y);
+                data += block;
+
+                this.blocks[x][y] = generateBlock(block);
 
                 if (x < caca - 1)
                 {
@@ -31,7 +35,7 @@ function World(){
 
             if (y < height - 1)
             {
-                data += "\n";
+                 data += "\n";
             }
 
         }
@@ -51,8 +55,8 @@ function World(){
         this.map.setCollisionByExclusion([ 4, 5 ]);
 
         //  0 is important
-        this.blocks = this.map.createLayer(0, WIDTH, HEIGHT);
-        // this.blocks.debug = true;
+        this.layer = this.map.createLayer(0, WIDTH, HEIGHT);
+        // this.layer.debug = true;
 
         // Create custom bounds
         var bounds = new Phaser.Rectangle(0, 0, WIDTH, (BLOCK_SIZE * height));
@@ -63,6 +67,14 @@ function World(){
         graphics.lineStyle(4, 0xffd900, 1);
         graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
+    };
+
+    var generateBlock = function(blockID){
+        var b = new Block();
+        if(blockID === 3){
+            b.break = false;
+        }
+        return b;
     };
 
     var generateTile = function(x, y) {
@@ -80,17 +92,45 @@ function World(){
 
     this.prev = null;
 
-    this.minning = function(player){
+    this.mining = function(player){
         const x = Math.round( (player.x ) / BLOCK_SIZE);
         const y = Math.round( (player.y + BLOCK_SIZE ) / BLOCK_SIZE);
-        // game.physics.arcade.collide(player, this.layer, removeTile);
 
-        this.map.removeTile(x, y, this.blocks);
+        var tile = this.map.getTile(x, y, this.layer);
+        var block = this.blocks[x][y];
+
+        if(!tile)
+            return;
+
+        if(!block){
+            console.error("block is null");
+            return;
+        }
+
+        if(block.break){
+            this.map.removeTile(x, y, this.layer);
+        }else{
+            console.error("nono");
+        }
 
     };
 
     this.checkCollision = function(player) {
-        game.physics.arcade.collide(player, this.blocks);
+        game.physics.arcade.collide(player, this.layer);
     }
 
+}
+
+function Create2DArray(rows) {
+    var arr = [];
+
+    for (var i=0;i<rows;i++) {
+        arr[i] = [];
+    }
+
+    return arr;
+}
+
+function Block() {
+    this.break = true;
 }
