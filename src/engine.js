@@ -2,16 +2,7 @@
  * Created by Jota on 28/08/2017.
  */
 
-const WIDTH = 640;
-const HEIGHT = 480;
-
 const engine = new Engine();
-
-const STATES = {
-    LOAD: "load",
-    MENU: "menu",
-    GAME: "game"
-};
 
 window.onload = function(){
     engine.init();

@@ -5,11 +5,19 @@
 var game = {
 
     init: function(){
-        engine.game.stage.backgroundColor = '#f0f';
+        engine.game.stage.backgroundColor = '#fff';
+        this.player = new Player();
+        this.player.init();
+        this.world = new World();
+        this.world.init();
     },
 
     create: function(){
-        console.log("initgame");
+
+    },
+
+    update: function(){
+      this.player.update();
     }
 
 };

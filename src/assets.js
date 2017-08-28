@@ -9,6 +9,10 @@ function Assets() {
 
     this.load = function(){
 
+        var load = engine.game.load;
+
+        load.spritesheet('player', 'assets/dude.png', 32, 48);
+
     };
 
 }
