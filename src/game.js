@@ -6,10 +6,11 @@ var game = {
 
     init: function(){
         engine.game.stage.backgroundColor = '#fff';
-        this.player = new Player();
-        this.player.init();
         this.world = new World();
         this.world.init();
+
+        this.player = new Player();
+        this.player.init();
     },
 
     create: function(){
@@ -17,7 +18,12 @@ var game = {
     },
 
     update: function(){
-      this.player.update();
+        this.world.checkCollision(this.player.player);
+        this.player.update();
+    },
+
+    render: function(){
+        engine.game.debug.text(this.game.time.fps, 8, 16, 0x00ff00);
     }
 
 };

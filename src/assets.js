@@ -11,6 +11,7 @@ function Assets() {
 
         var load = engine.game.load;
 
+        load.image('tiles', 'assets/tiles.jpg');
         load.spritesheet('player', 'assets/dude.png', 32, 48);
 
     };

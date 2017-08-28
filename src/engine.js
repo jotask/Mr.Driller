@@ -11,9 +11,16 @@ window.onload = function(){
 function Engine(){
 
     this.game = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO, "game");
+
     this.assets = new Assets();
 
     this.init = function(){
+
+        this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
+
+
+
+        this.game.time.advancedTiming = true;
 
         this.game.state.add(STATES.LOAD, load);
         this.game.state.add(STATES.MENU, menu);
