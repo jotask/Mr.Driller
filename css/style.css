@@ -1,0 +1,10 @@
+body{
+    background-color: aquamarine;
+    margin: auto;
+}
+
+#game{
+    margin:auto;
+    border: 0px solid red;
+    width: 640px;
+}
