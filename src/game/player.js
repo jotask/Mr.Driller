@@ -77,14 +77,14 @@ function Player(){
             game.world.mining(this.player);
         }
 
-        // if(this.jumpButton.isDown && this.player.body.onFloor() && engine.game.time.now > this.jumpTimer){
+        if(this.jumpButton.isDown && this.player.body.onFloor() && engine.game.time.now > this.jumpTimer){
+            b.velocity.y = -360;
+            this.jumpTimer = engine.game.time.now + 10;
+        }
+        // if(this.jumpButton.isDown ){
         //     b.velocity.y = -250;
         //     this.jumpTimer = engine.game.time.now + 10;
         // }
-        if(this.jumpButton.isDown ){
-            b.velocity.y = -250;
-            this.jumpTimer = engine.game.time.now + 10;
-        }
 
     }
 

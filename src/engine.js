@@ -7,6 +7,11 @@ const engine = new Engine();
 window.onload = function(){
     engine.init();
 };
+window.onkeydown = function (event) {
+    if (event.keyCode === 32) {
+        event.preventDefault();
+    }
+};
 
 function Engine(){
 
@@ -16,9 +21,7 @@ function Engine(){
 
     this.init = function(){
 
-        this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
-
-
+        this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 
         this.game.time.advancedTiming = true;
 

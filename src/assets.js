@@ -13,6 +13,7 @@ function Assets() {
 
         load.image('tiles', 'assets/tiles.jpg');
         load.spritesheet('player', 'assets/dude.png', 32, 48);
+        load.image('background', 'assets/background.png');
 
     };
 

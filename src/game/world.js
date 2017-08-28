@@ -14,6 +14,9 @@ function World(){
 
         engine.game.physics.arcade.gravity.y = 1000;
 
+        this.bg = engine.game.add.tileSprite(0,-200,800, 600, 'background');
+        engine.game.stage.backgroundColor = '#000000';
+
         const caca = w;
 
         this.blocks = Create2DArray(w) ;
