@@ -8,6 +8,16 @@ const STATES = {
     GAME: "game"
 };
 
+const Blocks = {
+    GRASS: 0,
+    DIRT: 1,
+    STONE: 2,
+    GRAVEL: 3,
+    SKY: 4,
+    WHITE: 5
+
+};
+
 const WIDTH = 640;
 const HEIGHT = 480;
 

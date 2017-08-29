@@ -23,6 +23,7 @@ function Engine(){
 
         this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 
+
         this.game.time.advancedTiming = true;
 
         this.game.state.add(STATES.LOAD, load);

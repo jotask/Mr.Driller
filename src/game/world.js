@@ -4,6 +4,9 @@
 function World(){
 
     const BLOCK_SIZE = 32;
+    this.getBlockSize = function(){
+        return BLOCK_SIZE;
+    }
 
     const w = (WIDTH / BLOCK_SIZE);
     const height = 15;
@@ -43,7 +46,7 @@ function World(){
 
         }
 
-        console.log(data);
+        // console.log(data);
 
         //  Add data to the cache
         engine.game.cache.addTilemap('map', null, data, Phaser.Tilemap.CSV);
@@ -95,9 +98,7 @@ function World(){
 
     this.prev = null;
 
-    this.mining = function(player){
-        const x = Math.round( (player.x ) / BLOCK_SIZE);
-        const y = Math.round( (player.y + BLOCK_SIZE ) / BLOCK_SIZE);
+    this.pick = function(x, y){
 
         var tile = this.map.getTile(x, y, this.layer);
         var block = this.blocks[x][y];
@@ -117,6 +118,29 @@ function World(){
         }
 
     };
+
+    // this.mining = function(player){
+    //     const x = Math.round( (player.x ) / BLOCK_SIZE);
+    //     const y = Math.round( (player.y + BLOCK_SIZE ) / BLOCK_SIZE);
+    //
+    //     var tile = this.map.getTile(x, y, this.layer);
+    //     var block = this.blocks[x][y];
+    //
+    //     if(!tile)
+    //         return;
+    //
+    //     if(!block){
+    //         console.error("block is null");
+    //         return;
+    //     }
+    //
+    //     if(block.break){
+    //         this.map.removeTile(x, y, this.layer);
+    //     }else{
+    //         console.error("nono");
+    //     }
+    //
+    // };
 
     this.checkCollision = function(player) {
         game.physics.arcade.collide(player, this.layer);

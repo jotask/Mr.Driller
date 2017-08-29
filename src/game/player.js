@@ -6,6 +6,8 @@ function Player(){
     this.init = function() {
         this.player = engine.game.add.sprite(WIDTH / 2, 100, 'player');
 
+        this.pickaxe = new Pickaxe(this);
+
         engine.game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
         var b = this.player.body;
@@ -73,19 +75,159 @@ function Player(){
             }
         }
 
-        if(this.down.isDown){
-            game.world.mining(this.player);
-        }
+        // if(this.down.isDown){
+        //     game.world.mining(this.player);
+        // }
 
         if(this.jumpButton.isDown && this.player.body.onFloor() && engine.game.time.now > this.jumpTimer){
             b.velocity.y = -360;
             this.jumpTimer = engine.game.time.now + 10;
         }
-        // if(this.jumpButton.isDown ){
-        //     b.velocity.y = -250;
-        //     this.jumpTimer = engine.game.time.now + 10;
+
+        this.pickaxe.update();
+        this.pickaxe.render();
+
+    };
+
+    this.getMiddle = function(){
+        var x = this.player.x + (this.player.width / 2);
+        var y = this.player.y + (this.player.height / 2);
+        return [x, y];
+    }
+
+}
+
+function Pickaxe(p){
+
+    this.player = p;
+
+    this.line = new Phaser.Line();
+    const ppp = this.player.getMiddle();
+    this.line.start.set(ppp[0], ppp[1]);
+    this.line.end.set(ppp[0], ppp[1]);
+    this.bounds = [];
+    this.points = [];
+    for(var i = 0; i < 20; i++) {
+        this.bounds[i] = new Phaser.Rectangle(0, 0, 0, 0);
+        this.points[i] = new Phaser.Point(0, 0);
+    }
+
+    // engine.game.input.onDown.add(startLine, this);
+    // engine.game.input.onUp.add(raycast, this);
+
+    engine.game.input.onTap.add(raycast, this);
+
+    var best = new Phaser.Rectangle(0,0,0,0);
+
+    var start = new Phaser.Point(0,0);
+
+    this.update = function(){
+
+        const p = this.player.getMiddle();
+        this.line.start.set(p[0], p[1]);
+        start.setTo(p[0], p[1]);
+
+        // const tmp = engine.game.input.mousePointer;
+        //
+        // if(tmp.x > 0 && tmp.x < WIDTH){
+        //     console.log("caca" + tmp.x)
         // }
 
+        const e = engine.game.input.mousePointer;
+        this.line.end.set(e.worldX, e.worldY);
+
+        var tiles = game.world.layer.getRayCastTiles(this.line, 3, true, false);
+        if(tiles.length > 0){
+            // var t = this.getClosest(tiles);
+            const BLOCK = game.world.getBlockSize();
+            for(var i = 0; i < this.bounds.length; i++){
+                if(tiles[i]) {
+                    var t = tiles[i];
+                    var middle = getTileMiddle(t);
+                    this.bounds[i].setTo(t.x * BLOCK, t.y * BLOCK, t.width, t.height);
+                    this.points[i].setTo(middle[0], middle[1]);
+                }else{
+                    this.bounds[i].setTo(0,0,0,0);
+                    this.points[i].setTo(0,0);
+                }
+            }
+            const caca = this.getClosest(tiles);
+            best.setTo(caca.x * BLOCK, caca.y * BLOCK, t.width, t.height);
+        }else{
+            for(var i = 0; i < this.bounds.length; i++){
+                this.bounds[i].setTo(0,0,0,0);
+                this.points[i].setTo(0,0);
+            }
+            best.setTo(0,0,0,0);
+        }
+
+    };
+
+    this.getClosest = function(tiles){
+
+        const x = this.line.start.x;
+        const y = this.line.start.y;
+
+        var result = tiles[0];
+        var min = Number.MAX_VALUE;
+
+        for(var i = 0; i < tiles.length; i++){
+            const tile = tiles[i];
+            var middle = getTileMiddle(tile);
+            var dst = distance(middle[0], middle[1], x, y);
+            if(dst < min){
+                min = dst;
+                result = tile;
+            }
+        }
+
+        return result;
+    };
+
+    var distance = function(a, b, x, y){
+        var one = Math.pow( ( a - x ) , 2);
+        var two = Math.pow( ( b - y ) , 2);
+        var three = Math.sqrt(one + two);
+        return three;
+    };
+
+    var getTileMiddle = function(tile){
+        var x = tile.worldX + (tile.width / 2);
+        var y = tile.worldY + (tile.height / 2);
+        return [x, y];
+    };
+
+    function raycast(pointer) {
+
+        var tiles = game.world.layer.getRayCastTiles(this.line, 3, true, false);
+
+        if (tiles.length > 0)
+        {
+            var tile = this.getClosest(tiles);
+            var center = getTileMiddle(tile);
+            tile.debug = true;
+            var dst = Math.abs(Math.round(distance(center[0],center[1] ,start.x, start.y)));
+            console.log(dst);
+            if(dst < 70) {
+                game.world.pick(tile.x, tile.y);
+                game.world.layer.dirty = true;
+                console.log("dig");
+            }else {
+                console.log("not");
+            }
+        }
+
+    }
+
+    this.render = function(){
+        engine.game.debug.geom(this.line);
+
+        for(var i = 0; i < 20; i++) {
+            engine.game.debug.geom(this.bounds[i]);
+            engine.game.debug.geom(this.points[i], "#ff0000");
+        }
+        engine.game.debug.geom(best, '#0fffff');
+        engine.game.debug.geom(start, '#ff0000');
     }
 
 }
