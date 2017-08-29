@@ -6,12 +6,12 @@ function World(){
     const BLOCK_SIZE = 32;
     this.getBlockSize = function(){
         return BLOCK_SIZE;
-    }
+    };
 
-    const w = (WIDTH / BLOCK_SIZE);
-    const height = 15;
+    this.width = (WIDTH / BLOCK_SIZE);
+    this.height = 15;
 
-    const offset = 5;
+    this.offset = 5;
 
     this.init = function(){
 
@@ -20,36 +20,14 @@ function World(){
         this.bg = engine.game.add.tileSprite(0,-200,800, 600, 'background');
         engine.game.stage.backgroundColor = '#000000';
 
-        const caca = w;
+        var gen = new Generation(this);
+        gen.generateWorld();
 
-        this.blocks = Create2DArray(w) ;
-
-        var data = '';
-        for (var y = 0; y < height; y++) {
-
-            for (var x = 0; x < caca; x++) {
-                var block = generateTile(x, y);
-                data += block;
-
-                this.blocks[x][y] = generateBlock(block);
-
-                if (x < caca - 1)
-                {
-                    data += ',';
-                }
-            }
-
-            if (y < height - 1)
-            {
-                 data += "\n";
-            }
-
-        }
-
-        // console.log(data);
+        this.blocks = gen.blocks;
+        this.data = gen.data;
 
         //  Add data to the cache
-        engine.game.cache.addTilemap('map', null, data, Phaser.Tilemap.CSV);
+        engine.game.cache.addTilemap('map', null, this.data, Phaser.Tilemap.CSV);
 
         //  Create our map (the 16x16 is the tile size)
         this.map = engine.game.add.tilemap('map', BLOCK_SIZE, BLOCK_SIZE);
@@ -65,7 +43,7 @@ function World(){
         // this.layer.debug = true;
 
         // Create custom bounds
-        var bounds = new Phaser.Rectangle(0, 0, WIDTH, (BLOCK_SIZE * height));
+        var bounds = new Phaser.Rectangle(0, 0, WIDTH, (BLOCK_SIZE * this.height));
         engine.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
 
         //  Just to display the bounds
@@ -73,27 +51,6 @@ function World(){
         graphics.lineStyle(4, 0xffd900, 1);
         graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
-    };
-
-    var generateBlock = function(blockID){
-        var b = new Block();
-        if(blockID === 3){
-            b.break = false;
-        }
-        return b;
-    };
-
-    var generateTile = function(x, y) {
-
-        if(y < offset){
-            return -1;
-        } else if(y == 0 + offset){
-            return 0;
-        }else if( y == (height - 1)){
-            return 3;
-        }
-        //return game.rnd.between(1,2).toString();
-        return 1;
     };
 
     this.prev = null;
@@ -146,16 +103,6 @@ function World(){
         game.physics.arcade.collide(player, this.layer);
     }
 
-}
-
-function Create2DArray(rows) {
-    var arr = [];
-
-    for (var i=0;i<rows;i++) {
-        arr[i] = [];
-    }
-
-    return arr;
 }
 
 function Block() {
