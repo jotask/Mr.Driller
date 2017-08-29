@@ -2,29 +2,38 @@
  * Created by Jota on 29/08/2017.
  */
 
-function Generation(_world) {
+function WorldConfig(){
 
-    var world = _world;
+    this.width = (WIDTH / BLOCK_SIZE);
+    this.height = 15;
+
+    this.offset = 5;
+
+}
+
+function Generation(_cfg) {
+
+    var config = _cfg;
 
     this.generateWorld = function() {
 
-        this.blocks = create2DArray(world.width);
+        this.blocks = create2DArray(config.width);
 
         var data = '';
-        for (var y = 0; y < world.height; y++) {
+        for (var y = 0; y < config.height; y++) {
 
-            for (var x = 0; x < world.width; x++) {
+            for (var x = 0; x < config.width; x++) {
                 var block = generateTile(x, y);
                 data += block;
 
                 this.blocks[x][y] = generateBlock(block);
 
-                if (x < world.width - 1) {
+                if (x < config.width - 1) {
                     data += ',';
                 }
             }
 
-            if (y < world.height - 1) {
+            if (y < config.height - 1) {
                 data += "\n";
             }
 
@@ -38,13 +47,13 @@ function Generation(_world) {
 
     var generateTile = function(x, y) {
 
-        const offset = world.offset;
+        const offset = config.offset;
 
         if (y < offset) {
             return -1;
         } else if (y == 0 + offset) {
             return 0;
-        } else if (y == (world.height - 1)) {
+        } else if (y == (config.height - 1)) {
             return 3;
         }
         //return game.rnd.between(1,2).toString();

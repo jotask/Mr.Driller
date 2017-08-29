@@ -3,15 +3,7 @@
  */
 function World(){
 
-    const BLOCK_SIZE = 32;
-    this.getBlockSize = function(){
-        return BLOCK_SIZE;
-    };
-
-    this.width = (WIDTH / BLOCK_SIZE);
-    this.height = 15;
-
-    this.offset = 5;
+    this.config = new WorldConfig();
 
     this.init = function(){
 
@@ -20,7 +12,7 @@ function World(){
         this.bg = engine.game.add.tileSprite(0,-200,800, 600, 'background');
         engine.game.stage.backgroundColor = '#000000';
 
-        var gen = new Generation(this);
+        var gen = new Generation(this.config);
         gen.generateWorld();
 
         this.blocks = gen.blocks;
@@ -43,7 +35,7 @@ function World(){
         // this.layer.debug = true;
 
         // Create custom bounds
-        var bounds = new Phaser.Rectangle(0, 0, WIDTH, (BLOCK_SIZE * this.height));
+        var bounds = new Phaser.Rectangle(0, 0, WIDTH, (BLOCK_SIZE * this.config.height));
         engine.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
 
         //  Just to display the bounds
@@ -53,51 +45,26 @@ function World(){
 
     };
 
-    this.prev = null;
-
     this.pick = function(x, y){
 
         var tile = this.map.getTile(x, y, this.layer);
         var block = this.blocks[x][y];
 
-        if(!tile)
+        if(!tile) {
+            console.error("[world.js::64] tile is null");
             return;
+        }
 
         if(!block){
-            console.error("block is null");
+            console.error("[world.js::69] block is null");
             return;
         }
 
         if(block.break){
             this.map.removeTile(x, y, this.layer);
-        }else{
-            console.error("nono");
         }
 
     };
-
-    // this.mining = function(player){
-    //     const x = Math.round( (player.x ) / BLOCK_SIZE);
-    //     const y = Math.round( (player.y + BLOCK_SIZE ) / BLOCK_SIZE);
-    //
-    //     var tile = this.map.getTile(x, y, this.layer);
-    //     var block = this.blocks[x][y];
-    //
-    //     if(!tile)
-    //         return;
-    //
-    //     if(!block){
-    //         console.error("block is null");
-    //         return;
-    //     }
-    //
-    //     if(block.break){
-    //         this.map.removeTile(x, y, this.layer);
-    //     }else{
-    //         console.error("nono");
-    //     }
-    //
-    // };
 
     this.checkCollision = function(player) {
         game.physics.arcade.collide(player, this.layer);

@@ -4,6 +4,7 @@
 function Player(){
 
     this.init = function() {
+
         this.player = engine.game.add.sprite(WIDTH / 2, 100, 'player');
 
         this.pickaxe = new Pickaxe(this);
@@ -26,7 +27,7 @@ function Player(){
         this.down = engine.game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.jumpButton = engine.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-        game.input.keyboard.removeKeyCapture(Phaser.Keyboard.SPACEBAR);
+        engine.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.SPACEBAR);
 
         this.facing = "idle";
         this.player.frame = 4;
@@ -38,14 +39,8 @@ function Player(){
     this.update = function(){
 
         engine.game.camera.follow(this.player);
-        /*
-        var tile = game.world.isGrounded(this.player);
-        engine.game.physics.arcade.collide(this.player, tile);
-        */
 
         var b = this.player.body;
-
-        // console.log(b.blocked.down);
 
         b.velocity.x = 0;
 
@@ -74,10 +69,6 @@ function Player(){
                 this.facing = 'idle';
             }
         }
-
-        // if(this.down.isDown){
-        //     game.world.mining(this.player);
-        // }
 
         if(this.jumpButton.isDown && this.player.body.onFloor() && engine.game.time.now > this.jumpTimer){
             b.velocity.y = -360;
@@ -127,24 +118,17 @@ function Pickaxe(p){
         this.line.start.set(p[0], p[1]);
         start.setTo(p[0], p[1]);
 
-        // const tmp = engine.game.input.mousePointer;
-        //
-        // if(tmp.x > 0 && tmp.x < WIDTH){
-        //     console.log("caca" + tmp.x)
-        // }
-
         const e = engine.game.input.mousePointer;
         this.line.end.set(e.worldX, e.worldY);
 
         var tiles = game.world.layer.getRayCastTiles(this.line, 3, true, false);
         if(tiles.length > 0){
             // var t = this.getClosest(tiles);
-            const BLOCK = game.world.getBlockSize();
             for(var i = 0; i < this.bounds.length; i++){
                 if(tiles[i]) {
                     var t = tiles[i];
                     var middle = getTileMiddle(t);
-                    this.bounds[i].setTo(t.x * BLOCK, t.y * BLOCK, t.width, t.height);
+                    this.bounds[i].setTo(t.x * BLOCK_SIZE, t.y * BLOCK_SIZE, t.width, t.height);
                     this.points[i].setTo(middle[0], middle[1]);
                 }else{
                     this.bounds[i].setTo(0,0,0,0);
@@ -152,7 +136,7 @@ function Pickaxe(p){
                 }
             }
             const caca = this.getClosest(tiles);
-            best.setTo(caca.x * BLOCK, caca.y * BLOCK, t.width, t.height);
+            best.setTo(caca.x * BLOCK_SIZE, caca.y * BLOCK_SIZE, t.width, t.height);
         }else{
             for(var i = 0; i < this.bounds.length; i++){
                 this.bounds[i].setTo(0,0,0,0);
@@ -197,7 +181,7 @@ function Pickaxe(p){
         return [x, y];
     };
 
-    function raycast(pointer) {
+    function raycast() {
 
         var tiles = game.world.layer.getRayCastTiles(this.line, 3, true, false);
 
@@ -207,13 +191,9 @@ function Pickaxe(p){
             var center = getTileMiddle(tile);
             tile.debug = true;
             var dst = Math.abs(Math.round(distance(center[0],center[1] ,start.x, start.y)));
-            console.log(dst);
             if(dst < 70) {
                 game.world.pick(tile.x, tile.y);
                 game.world.layer.dirty = true;
-                console.log("dig");
-            }else {
-                console.log("not");
             }
         }
 

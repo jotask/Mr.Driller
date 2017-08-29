@@ -21,4 +21,6 @@ const Blocks = {
 const WIDTH = 640;
 const HEIGHT = 480;
 
+const BLOCK_SIZE = 32;
+
 const INIT_STATE = STATES.GAME;
