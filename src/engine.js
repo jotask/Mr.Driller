@@ -23,6 +23,8 @@ function Engine(){
 
         this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 
+        this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.SPACEBAR);
+
 
         this.game.time.advancedTiming = true;
 

@@ -60,7 +60,7 @@ function World(){
             return;
         }
 
-        if(block.breakable){
+        if(block.type.breakable){
             this.map.removeTile(x, y, this.layer);
         }
 
@@ -68,6 +68,12 @@ function World(){
 
     this.checkCollision = function(player) {
         game.physics.arcade.collide(player, this.layer);
-    }
+    };
 
+}
+
+function Block(x, y, _type){
+    this.x = x;
+    this.y = y;
+    this.type = _type;
 }

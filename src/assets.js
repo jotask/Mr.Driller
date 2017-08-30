@@ -14,6 +14,8 @@ function Assets() {
         load.image('tiles', 'assets/tiles.jpg');
         load.spritesheet('player', 'assets/dude.png', 32, 48);
         load.image('background', 'assets/background.png');
+        load.image('selection', 'assets/selection.png');
+        load.spritesheet('breaking', 'assets/break.png', 32, 32);
 
     };
 

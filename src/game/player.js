@@ -27,8 +27,6 @@ function Player(){
         this.down = engine.game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.jumpButton = engine.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-        engine.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.SPACEBAR);
-
         this.facing = "idle";
         this.player.frame = 4;
 
@@ -76,7 +74,6 @@ function Player(){
         }
 
         this.pickaxe.update();
-        this.pickaxe.render();
 
     };
 
@@ -92,64 +89,138 @@ function Pickaxe(p){
 
     this.player = p;
 
-    this.line = new Phaser.Line();
+    var a = engine.game.add.sprite(Number.MAX_VALUE, Number.MAX_VALUE, 'breaking');
+    a.visible = false;
+
+    var line = new Phaser.Line();
     const ppp = this.player.getMiddle();
-    this.line.start.set(ppp[0], ppp[1]);
-    this.line.end.set(ppp[0], ppp[1]);
-    this.bounds = [];
-    this.points = [];
-    for(var i = 0; i < 20; i++) {
-        this.bounds[i] = new Phaser.Rectangle(0, 0, 0, 0);
-        this.points[i] = new Phaser.Point(0, 0);
-    }
+    line.start.set(ppp[0], ppp[1]);
+    line.end.set(ppp[0], ppp[1]);
 
-    // engine.game.input.onDown.add(startLine, this);
-    // engine.game.input.onUp.add(raycast, this);
-
-    engine.game.input.onTap.add(raycast, this);
+    const MAX_DISTANCE = 70;
 
     var best = new Phaser.Rectangle(0,0,0,0);
+    var selection = engine.game.add.sprite(best.x, best.y,'selection');
 
     var start = new Phaser.Point(0,0);
+
+    const POWER = 5;
+
+    var mining = {
+        block: null,
+        health: Number.MAX_VALUE,
+        pressed: false
+    };
+
+    var press = function(){
+        var x = selection.x / BLOCK_SIZE;
+        var y = selection.y / BLOCK_SIZE;
+
+        if(x < 0 || y < 0)
+            return;
+
+        mining.pressed = true;
+        mining.block = game.world.blocks[x][y];
+        mining.health = mining.block.type.health;
+
+        a.visible = true;
+
+    };
+
+    var release = function() {
+        mining.pressed = false;
+        mining.block = null;
+        mining.health = Number.MAX_VALUE;
+
+        a.frame = 0;
+
+        a.visible = false;
+
+    };
 
     this.update = function(){
 
         const p = this.player.getMiddle();
-        this.line.start.set(p[0], p[1]);
+        line.start.set(p[0], p[1]);
         start.setTo(p[0], p[1]);
 
         const e = engine.game.input.mousePointer;
-        this.line.end.set(e.worldX, e.worldY);
+        line.end.set(e.worldX, e.worldY);
 
-        var tiles = game.world.layer.getRayCastTiles(this.line, 3, true, false);
+        var tiles = game.world.layer.getRayCastTiles(line, 3, true, false);
         if(tiles.length > 0){
-            for(var i = 0; i < this.bounds.length; i++){
-                if(tiles[i]) {
-                    var t = tiles[i];
-                    var middle = getTileMiddle(t);
-                    this.bounds[i].setTo(t.x * BLOCK_SIZE, t.y * BLOCK_SIZE, t.width, t.height);
-                    this.points[i].setTo(middle[0], middle[1]);
-                }else{
-                    this.bounds[i].setTo(0,0,0,0);
-                    this.points[i].setTo(0,0);
-                }
-            }
-            const caca = this.getClosest(tiles);
-            best.setTo(caca.x * BLOCK_SIZE, caca.y * BLOCK_SIZE, t.width, t.height);
+
+            const tile = getClosest(tiles);
+            var middle = getTileMiddle(tile);
+            var dst = distance(middle[0], middle[1], start.x, start.y);
+            if(dst < MAX_DISTANCE) {
+                best.setTo(tile.x * BLOCK_SIZE, tile.y * BLOCK_SIZE, tile.width, tile.height);
+                selection.x = best.x;
+                selection.y = best.y;
+            }else{
+                best.setTo(-100,-100,0,0);
+                selection.x = best.x;
+                selection.y = best.y;}
         }else{
-            for(var i = 0; i < this.bounds.length; i++){
-                this.bounds[i].setTo(0,0,0,0);
-                this.points[i].setTo(0,0);
-            }
-            best.setTo(0,0,0,0);
+
+            best.setTo(-100,-100,0,0);
+            selection.x = best.x;
+            selection.y = best.y;
         }
+
+        breakme: if(mining.pressed){
+
+            var x = selection.x / BLOCK_SIZE;
+            var y = selection.y / BLOCK_SIZE;
+
+            if(x < 0 || y < 0) {
+                release();
+                break breakme;
+            }
+
+            var other = game.world.blocks[x][y];
+
+            if(mining.block === other){
+                mining.health -= POWER;
+
+                var percentage = calculatePercentage(mining.block, mining.health);
+
+                if(percentage < .25){
+                    a.frame = 3;
+                }else if(percentage < .5){
+                    a.frame = 2;
+                }else if(percentage < .75){
+                    a.frame = 1;
+                }else if(percentage < 1){
+                    a.frame = 0;
+                }
+
+                if(mining.health < 0){
+                    raycast();
+                    release();
+                    press();
+                }
+            }else{
+                release();
+                press();
+            }
+        }
+
+        a.x = selection.x;
+        a.y = selection.y;
 
     };
 
-    this.getClosest = function(tiles){
+    var calculatePercentage = function(block, current){
+        var a = 100 * current;
+        var b = a / block.type.health;
+        return b / 100;
+    };
 
-        const x = this.line.start.x;
-        const y = this.line.start.y;
+    var getClosest = function(tiles){
+
+        const x = line.start.x;
+        const y = line.start.y;
 
         var result = tiles[0];
         var min = Number.MAX_VALUE;
@@ -178,33 +249,23 @@ function Pickaxe(p){
         return [x, y];
     };
 
-    function raycast() {
+    var raycast = function() {
 
-        var tiles = game.world.layer.getRayCastTiles(this.line, 3, true, false);
+        var tiles = game.world.layer.getRayCastTiles(line, 3, true, false);
 
-        if (tiles.length > 0)
-        {
-            var tile = this.getClosest(tiles);
+        if (tiles.length > 0) {
+            var tile = getClosest(tiles);
             var center = getTileMiddle(tile);
-            tile.debug = true;
             var dst = Math.abs(Math.round(distance(center[0],center[1] ,start.x, start.y)));
-            if(dst < 70) {
+            if(dst < MAX_DISTANCE) {
                 game.world.pick(tile.x, tile.y);
                 game.world.layer.dirty = true;
             }
         }
 
-    }
+    };
 
-    this.render = function(){
-        engine.game.debug.geom(this.line);
-
-        for(var i = 0; i < 20; i++) {
-            engine.game.debug.geom(this.bounds[i]);
-            engine.game.debug.geom(this.points[i], "#ff0000");
-        }
-        engine.game.debug.geom(best, '#0fffff');
-        engine.game.debug.geom(start, '#ff0000');
-    }
+    engine.game.input.onDown.add(press, this);
+    engine.game.input.onUp.add(release, this);
 
 }

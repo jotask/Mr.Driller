@@ -31,12 +31,12 @@ function Generation(_cfg) {
                 var block;
 
                 if(y < config.offset){
-                    block = Blocks.AIR;
+                    block = new Block(x, y, Blocks.AIR);
                 }else{
                     block = generateBlock(x, y);
                 }
 
-                data += block.id;
+                data += block.type.id;
                 this.blocks[x][y] = block;
 
                 // var block = generateTile(x, y);
@@ -70,31 +70,20 @@ function Generation(_cfg) {
 
 
         if(y == config.offset){
-            return Blocks.GRASS;
+            return new Block(x, y, Blocks.GRASS);
         }else if(y == (config.height - 1)){
-            return Blocks.OBSIDIAN;
+            return new Block(x, y, Blocks.OBSIDIAN);
         }
-
-        console.log(noise);
 
         if(noise < .5){
             if(Math.random() < .5){
-                return Blocks.IRON
+                return new Block(x, y, Blocks.IRON);
             }
-            return Blocks.GOLD;
+            return new Block(x, y, Blocks.GOLD);
         }
 
-        return Blocks.DIRT;
-        // if(blockID == -1){
-        //     return;
-        // }
-        // for(var i in Blocks) {
-        //     var block = Blocks[i];
-        //     if(block.id == blockID){
-        //         return block;
-        //     }
-        // }
-        // console.log("[Generation::GenerateBlock] Unknown block: " + blockID)
+        return new Block(x, y, Blocks.DIRT);
+
     };
 
 
