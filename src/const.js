@@ -9,13 +9,15 @@ const STATES = {
 };
 
 const Blocks = {
-    GRASS: 0,
-    DIRT: 1,
-    STONE: 2,
-    GRAVEL: 3,
-    SKY: 4,
-    WHITE: 5
-
+    AIR: { id: -1, breakable: false},
+    GRASS: { id: 0, breakable: true},
+    DIRT: { id: 1, breakable: true},
+    STONE: { id: 2, breakable: true},
+    OBSIDIAN: { id: 3, breakable: false},
+    SKY: { id: 4, breakable: true},
+    WHITE: { id: 5, breakable: true},
+    IRON: { id: 6, breakable: true},
+    GOLD: { id: 7, breakable: true}
 };
 
 const WIDTH = 640;

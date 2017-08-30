@@ -5,7 +5,7 @@ function Player(){
 
     this.init = function() {
 
-        this.player = engine.game.add.sprite(WIDTH / 2, 100, 'player');
+        this.player = engine.game.add.sprite(WIDTH / 2, 0, 'player');
 
         this.pickaxe = new Pickaxe(this);
 
@@ -123,7 +123,6 @@ function Pickaxe(p){
 
         var tiles = game.world.layer.getRayCastTiles(this.line, 3, true, false);
         if(tiles.length > 0){
-            // var t = this.getClosest(tiles);
             for(var i = 0; i < this.bounds.length; i++){
                 if(tiles[i]) {
                     var t = tiles[i];
@@ -164,15 +163,13 @@ function Pickaxe(p){
                 result = tile;
             }
         }
-
         return result;
     };
 
     var distance = function(a, b, x, y){
         var one = Math.pow( ( a - x ) , 2);
         var two = Math.pow( ( b - y ) , 2);
-        var three = Math.sqrt(one + two);
-        return three;
+        return Math.sqrt(one + two);
     };
 
     var getTileMiddle = function(tile){

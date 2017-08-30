@@ -9,24 +9,40 @@ function WorldConfig(){
 
     this.offset = 5;
 
+    this.seed = Math.random();
+
 }
 
 function Generation(_cfg) {
 
     var config = _cfg;
 
+    var perlin = new Perlin(config.seed);
+
     this.generateWorld = function() {
 
         this.blocks = create2DArray(config.width);
 
         var data = '';
+
         for (var y = 0; y < config.height; y++) {
-
             for (var x = 0; x < config.width; x++) {
-                var block = generateTile(x, y);
-                data += block;
 
-                this.blocks[x][y] = generateBlock(block);
+                var block;
+
+                if(y < config.offset){
+                    block = Blocks.AIR;
+                }else{
+                    block = generateBlock(x, y);
+                }
+
+                data += block.id;
+                this.blocks[x][y] = block;
+
+                // var block = generateTile(x, y);
+                // data += block;
+                //
+                // this.blocks[x][y] = generateBlock(block);
 
                 if (x < config.width - 1) {
                     data += ',';
@@ -39,35 +55,49 @@ function Generation(_cfg) {
 
         }
 
-        console.log(data);
+        // console.log(data);
 
         this.data = data;
 
     };
 
-    var generateTile = function(x, y) {
+    var generateBlock = function(x, y) {
 
-        const offset = config.offset;
+        const scale = 3;
 
-        if (y < offset) {
-            return -1;
-        } else if (y == 0 + offset) {
-            return 0;
-        } else if (y == (config.height - 1)) {
-            return 3;
+        // noise.simplex2 and noise.perlin2 for 2d noise
+        var noise = perlin.noise(x / scale, y / scale, 0);
+
+
+        if(y == config.offset){
+            return Blocks.GRASS;
+        }else if(y == (config.height - 1)){
+            return Blocks.OBSIDIAN;
         }
-        //return game.rnd.between(1,2).toString();
-        return 1;
 
+        console.log(noise);
+
+        if(noise < .5){
+            if(Math.random() < .5){
+                return Blocks.IRON
+            }
+            return Blocks.GOLD;
+        }
+
+        return Blocks.DIRT;
+        // if(blockID == -1){
+        //     return;
+        // }
+        // for(var i in Blocks) {
+        //     var block = Blocks[i];
+        //     if(block.id == blockID){
+        //         return block;
+        //     }
+        // }
+        // console.log("[Generation::GenerateBlock] Unknown block: " + blockID)
     };
 
-    var generateBlock = function(blockID) {
-        var b = new Block();
-        if (blockID === 3) {
-            b.break = false;
-        }
-        return b;
-    };
+
 
     var create2DArray = function(rows) {
 
