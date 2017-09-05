@@ -1,5 +1,5 @@
 /**
- * Created by Jota on 29/08/2017.
+ * Created by Jose Vives on 29/08/2017.
  */
 
 function WorldConfig(){

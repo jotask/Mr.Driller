@@ -1,5 +1,5 @@
 /**
- * Created by Jota on 28/08/2017.
+ * Created by Jose Vives on 28/08/2017.
  */
 
 var game = {
@@ -11,6 +11,7 @@ var game = {
 
         this.player = new Player();
         this.player.init();
+        
     },
 
     create: function(){

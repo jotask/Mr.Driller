@@ -1,5 +1,5 @@
 /**
- * Created by Jota on 28/08/2017.
+ * Created by Jose Vives on 28/08/2017.
  */
 function World(){
 
@@ -61,6 +61,14 @@ function World(){
         }
 
         if(block.type.breakable){
+            // game.player.inventory.pickUp(block);
+
+            var it = new ItemEntity(block);
+
+            engine.game.add.existing(it);
+
+            // TODO set the block to empty
+            // this.blocks[x][y] = Blocks.AIR;
             this.map.removeTile(x, y, this.layer);
         }
 
