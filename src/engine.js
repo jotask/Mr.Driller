@@ -39,6 +39,8 @@ function Engine(){
     // TODO implement https://phaser.io/examples/v2/misc/game-config
     this.game = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO, "game");
 
+    this.game.smoothed = false;
+
     this.assets = new Assets();
 
     this.init = function(){

@@ -5,6 +5,8 @@ function Player(){
 
     this.init = function() {
 
+        this.money = 100;
+
         this.player = engine.game.add.sprite(WIDTH / 2, 0, 'player');
 
         this.inventory = new Inventory();

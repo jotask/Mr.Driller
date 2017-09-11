@@ -96,6 +96,11 @@ function Pickaxe(p){
 
             var other = game.world.blocks[x][y];
 
+            if(!other.type.breakable){
+                release();
+                break breakme;
+            }
+
             if(mining.block === other){
                 mining.health -= POWER;
 

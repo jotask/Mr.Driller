@@ -2,6 +2,13 @@
  * Created by Jose Vives on 05/09/2017.
  */
 
+/**
+ * Item on the floor
+ *
+ * @param _block
+ * @constructor
+ */
+
 //  Here is a custom game object
 ItemEntity = function (_block) {
 
@@ -9,19 +16,21 @@ ItemEntity = function (_block) {
 
     this.frame = _block.type.id;
 
-    this.start = [this.x, this.y];
-
     this.scale.setTo(0.5, 0.5);
     this.anchor.setTo(0.5, 0.5);
 
     this.rotateSpeed = Math.random();
 
-    this.cnt = 0;
+    this.block = _block;
 
     engine.game.physics.arcade.enable(this);
     this.enableBody = true;
     this.body.immovable = true;
-    this.body.allowGravity = false;
+    this.body.allowGravity = true;
+
+    this.body.bounce.set(0.5);
+
+    engine.game.add.existing(this);
 
 };
 
@@ -35,14 +44,13 @@ ItemEntity.prototype.update = function() {
 
     this.angle += this.rotateSpeed;
 
-    this.y += Math.cos(this.cnt);
+    engine.game.physics.arcade.overlap(this, game.player.player, this.collisionHandler, null, this);
 
-    this.cnt += 0.15;
-
-    engine.game.physics.arcade.overlap(this, game.player, this.collisionPlayer, null, this);
+    game.world.checkCollision(this);
 
 };
 
-ItemEntity.prototype.collisionPlayer = function(){
-    console.log("coool");
+ItemEntity.prototype.collisionHandler = function(){
+    game.player.inventory.pickUp(this.block);
+    this.kill();
 };

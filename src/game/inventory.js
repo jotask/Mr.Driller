@@ -13,22 +13,14 @@ function Inventory() {
     var inventoryMenu = {
         offset: 5,
         group: null,
-        bounds: new Phaser.Rectangle(0,0,0,0),
-        bg: engine.game.add.sprite(-Number.MAX_VALUE,-Number.MAX_VALUE, 'selection')
+        bounds: new Phaser.Rectangle(0,0,0,0)
+        // ,
+        // bg: engine.game.add.sprite(-Number.MAX_VALUE,-Number.MAX_VALUE, 'selection')
     };
 
     var pause_label = game.add.text(WIDTH - 120, 20, 'Inventory', { font: '24px Arial', fill: '#fff' });
     pause_label.inputEnabled = true;
     pause_label.events.onInputUp.add(showInventory);
-    engine.game.input.onDown.add(hideInventory, self);
-
-    this.update = function(){
-
-    };
-
-    this.render = function() {
-
-    };
 
     this.pickUp = function(_block) {
         if (items.length > MAX_ITEMS) {
@@ -77,26 +69,26 @@ function Inventory() {
         console.log("item not found");
     };
 
-    for(var i = 0; i < 10; i++){
-        var rnd = Math.round(Math.random() * 10);
-
-        var type = Blocks.DIRT;
-
-        if(rnd < 2){
-            type = Blocks.GOLD;
-        }else if(rnd < 4){
-            type = Blocks.IRON;
-        }else if(rnd < 6){
-            type = Blocks.GRASS;
-        }else if(rnd < 7){
-            type = Blocks.OBSIDIAN;
-        }
-
-        console.log(rnd);
-
-        var block = new Block(0,0,type);
-        this.pickUp(block);
-    }
+    // for(var i = 0; i < 10; i++){
+    //     var rnd = Math.round(Math.random() * 10);
+    //
+    //     var type = Blocks.DIRT;
+    //
+    //     if(rnd < 2){
+    //         type = Blocks.GOLD;
+    //     }else if(rnd < 4){
+    //         type = Blocks.IRON;
+    //     }else if(rnd < 6){
+    //         type = Blocks.GRASS;
+    //     }else if(rnd < 7){
+    //         type = Blocks.OBSIDIAN;
+    //     }
+    //
+    //     console.log(rnd);
+    //
+    //     var block = new Block(0,0,type);
+    //     this.pickUp(block);
+    // }
 
     function showInventory(){
 
@@ -109,21 +101,16 @@ function Inventory() {
             var hh = HEIGHT - yy * 2;
 
             inventoryMenu.bounds.setTo(xx, yy, ww, hh);
-            inventoryMenu.bg.x = xx;
-            inventoryMenu.bg.y = yy;
-            inventoryMenu.bg.width = ww;
-            inventoryMenu.bg.height = hh;
 
         }
 
-        // When the pause button is pressed, we pause the game
         engine.game.paused = true;
 
-        // Then add the menu
-        // menu = game.add.sprite(WIDTH/2, HEIGHT/2, 'menu');
-        // menu.anchor.setTo(0.5, 0.5);
-        // inventoryMenu.create(WIDTH / 2, HEIGHT / 2, 'breaking');
-        // inventoryMenu.anchor.setTo(0.5, 0.5);
+        var bar = engine.game.add.graphics();
+        bar.beginFill(0xffffff, 0.75);
+        bar.drawRect(inventoryMenu.bounds.x, inventoryMenu.bounds.y, inventoryMenu.bounds.width, inventoryMenu.bounds.height);
+
+        inventoryMenu.group.add(bar);
 
         const w = (inventoryMenu.bounds.width) / (5);
         const h = (inventoryMenu.bounds.height) / (3);
@@ -150,19 +137,13 @@ function Inventory() {
             var img = engine.game.add.sprite(x + 3, y + 3, 'blocks');
             img.width = w - 7 - 3;
             img.height = h - 8 - 3;
-            img.smoothed = false;
 
             img.frame = tmp.block.id;
 
-            // button.scale.setTo(0.5, 1);
-            // button.onInputOver.add(over, this);
-            // button.onInputOut.add(out, this);
-            // button.onInputDown.add(actionOnClick, this);
+            img.smoothed = false;
 
-            // game.input.onDown.addOnce(removeGroup, this);
-
-            inventoryMenu.group.add(img);
             inventoryMenu.group.add(button);
+            inventoryMenu.group.add(img);
             inventoryMenu.group.add(number);
 
             if(MAX_ITEMS / 2 == i + 1){
@@ -175,61 +156,35 @@ function Inventory() {
 
         }
 
-        inventoryMenu.bg.visible = true;
+        var style = { font: "bold 32px Arial", fill: "#f00", boundsAlignH: "center", boundsAlignV: "middle" };
 
-        // And a label to illustrate which menu item was chosen. (This is not necessary)
-        // choiseLabel = game.add.text(WIDTH/2, HEIGHT-150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
-        // choiseLabel.anchor.setTo(0.5, 0.5);
+        var exit = engine.game.add.text(inventoryMenu.bounds.x, inventoryMenu.bounds.y, "close", style);
+        exit.setTextBounds(inventoryMenu.bounds.x, inventoryMenu.bounds.y, inventoryMenu.bounds.width, inventoryMenu.bounds.height);
+        exit.inputEnabled = true;
+        exit.events.onInputDown.add(hideInventory);
+
+        inventoryMenu.group.add(exit);
 
     }
 
-    // function removeGroup() {
-        // game.world.remove(inventoryMenu);
-        // group.destroy();
-    // }
-
-    // function over() { console.log('button over'); }
-    // function out() { console.log('button out'); }
-    // function actionOnClick () { console.log('button clicked'); }
-
     function hideInventory(event){
-        // Only act if paused
+
         if(engine.game.paused){
-            // Calculate the corners of the menu
-            // var x1 = WIDTH/2 - 270/2, x2 = WIDTH/2 + 270/2,
-            //     y1 = HEIGHT/2 - 180/2, y2 = HEIGHT/2 + 180/2;
             var x1 = inventoryMenu.bounds.x;
             var x2 = x1 + inventoryMenu.bounds.width;
-            var y1 = inventoryMenu.bounds.x;
+            var y1 = inventoryMenu.bounds.y;
             var y2 = y1 + inventoryMenu.bounds.height;
 
             // Check if the click was inside the menu
             if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
-                // The choicemap is an array that will help us see which item was clicked
-                var choisemap = ['one', 'two', 'three', 'four', 'five', 'six'];
-
-                // Get menu local coordinates for the click
-                var x = event.x - x1,
-                    y = event.y - y1;
-
-                // Calculate the choice
-                var choise = Math.floor(x / 90) + 3*Math.floor(y / 90);
-
-                // Display the choice
-                // choiseLabel.text = 'You chose menu item: ' + choisemap[choise];
+                console.log("Clicked inside");
             }
-            else{
 
-                // Remove the menu and the label
-                inventoryMenu.group.destroy();
-                // choiseLabel.destroy();
+            inventoryMenu.group.destroy();
+            engine.game.paused = false;
 
-                inventoryMenu.bg.visible = false;
-
-                // Unpause the game
-                engine.game.paused = false;
-            }
         }
+
     }
 
 }

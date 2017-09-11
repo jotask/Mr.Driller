@@ -63,9 +63,7 @@ function World(){
         if(block.type.breakable){
             // game.player.inventory.pickUp(block);
 
-            var it = new ItemEntity(block);
-
-            engine.game.add.existing(it);
+            new ItemEntity(block);
 
             // TODO set the block to empty
             // this.blocks[x][y] = Blocks.AIR;
@@ -74,8 +72,8 @@ function World(){
 
     };
 
-    this.checkCollision = function(player) {
-        game.physics.arcade.collide(player, this.layer);
+    this.checkCollision = function(_enitity) {
+        game.physics.arcade.collide(_enitity, this.layer);
     };
 
 }

@@ -20,6 +20,9 @@ function Assets() {
         load.image('selection', 'assets/selection.png');
         load.spritesheet('breaking', 'assets/break.png', 32, 32);
         load.spritesheet('button', 'assets/button_sprite_sheet.png', 70, 71);
+        load.spritesheet('investigating', 'assets/machine_invest.png', 32, 32);
+        load.spritesheet('upgrades', 'assets/upgrades_machines.png', 64, 64);
+        load.image('shop', 'assets/shop.png');
 
     };
 

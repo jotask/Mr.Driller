@@ -29,7 +29,7 @@ function loadStart() {
 }
 
 function fileComplete(progress, cacheKey, success, totalLoaded, totalFiles) {
-    console.log("File Complete: " + progress + "% - " + totalLoaded + " out of " + totalFiles);
+    // console.log("File Complete: " + progress + "% - " + totalLoaded + " out of " + totalFiles);
 }
 
 function loadComplete() {
