@@ -13,6 +13,11 @@ function Assets() {
 
         var load = engine.game.load;
 
+        load.image('fire1', 'assets/particles/fire1.png');
+        load.image('fire2', 'assets/particles/fire2.png');
+        load.image('fire3', 'assets/particles/fire3.png');
+        load.image('smoke', 'assets/particles/smoke-puff.png');
+
         load.image('tiles', 'assets/tiles.jpg');
         load.spritesheet('blocks', 'assets/tiles.jpg', 32, 32);
         load.spritesheet('player', 'assets/dude.png', 32, 48);

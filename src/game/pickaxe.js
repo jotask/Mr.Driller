@@ -1,26 +1,26 @@
 /**
  * Created by Jose Vives on 03/09/2017.
  */
-function Pickaxe(p){
+function Pickaxe(_p){
 
-    this.player = p;
+    const self = this;
+
+    var player = _p;
+    this.MAX_DISTANCE = 70;
+    this.POWER = 100;
 
     var a = engine.game.add.sprite(Number.MAX_VALUE, Number.MAX_VALUE, 'breaking');
     a.visible = false;
 
     var line = new Phaser.Line();
-    const ppp = this.player.getMiddle();
+    const ppp = player.getMiddle();
     line.start.set(ppp[0], ppp[1]);
     line.end.set(ppp[0], ppp[1]);
-
-    const MAX_DISTANCE = 70;
 
     var best = new Phaser.Rectangle(0,0,0,0);
     var selection = engine.game.add.sprite(best.x, best.y,'selection');
 
     var start = new Phaser.Point(0,0);
-
-    const POWER = 100;
 
     var mining = {
         block: null,
@@ -47,16 +47,13 @@ function Pickaxe(p){
         mining.pressed = false;
         mining.block = null;
         mining.health = Number.MAX_VALUE;
-
         a.frame = 0;
-
         a.visible = false;
-
     };
 
     this.update = function(){
 
-        const p = this.player.getMiddle();
+        const p = player.getMiddle();
         line.start.set(p[0], p[1]);
         start.setTo(p[0], p[1]);
 
@@ -69,7 +66,7 @@ function Pickaxe(p){
             const tile = getClosest(tiles);
             var middle = getTileMiddle(tile);
             var dst = distance(middle[0], middle[1], start.x, start.y);
-            if(dst < MAX_DISTANCE) {
+            if(dst < this.MAX_DISTANCE) {
                 best.setTo(tile.x * BLOCK_SIZE, tile.y * BLOCK_SIZE, tile.width, tile.height);
                 selection.x = best.x;
                 selection.y = best.y;
@@ -102,7 +99,7 @@ function Pickaxe(p){
             }
 
             if(mining.block === other){
-                mining.health -= POWER;
+                mining.health -= self.POWER;
 
                 var percentage = calculatePercentage(mining.block, mining.health);
 
@@ -178,7 +175,7 @@ function Pickaxe(p){
             var tile = getClosest(tiles);
             var center = getTileMiddle(tile);
             var dst = Math.abs(Math.round(distance(center[0],center[1] ,start.x, start.y)));
-            if(dst < MAX_DISTANCE) {
+            if(dst < self.MAX_DISTANCE) {
                 game.world.pick(tile.x, tile.y);
                 game.world.layer.dirty = true;
             }

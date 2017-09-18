@@ -93,6 +93,12 @@ Shop.prototype.showHud = function(_obj){
         _obj._hud.group.destroy();
         engine.game.paused = false;
     });
+    exit.events.onInputOver.add(function(){
+        exit.tint = 0x00ff00;
+    });
+    exit.events.onInputOut.add(function(){
+        exit.tint = 0xffffff;
+    });
 
 
     var style = { font: "bold 32px Arial", fill: "#f00", boundsAlignH: "left", boundsAlignV: "bottom" };

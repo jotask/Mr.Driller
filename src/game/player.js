@@ -3,17 +3,22 @@
  */
 function Player(){
 
+    const self = this;
+
     this.init = function() {
 
-        this.money = 100;
+        self.oxygen = new Oxygen();
+        self.jetpack = new JettPack();
 
-        this.player = engine.game.add.sprite(WIDTH / 2, 0, 'player');
+        self.money = 100;
 
-        this.inventory = new Inventory();
+        self.player = engine.game.add.sprite(WIDTH / 2, 0, 'player');
 
-        this.pickaxe = new Pickaxe(this);
+        self.inventory = new Inventory();
 
-        engine.game.physics.enable(this.player, Phaser.Physics.ARCADE);
+        self.pickaxe = new Pickaxe(this);
+
+        engine.game.physics.enable(self.player, Phaser.Physics.ARCADE);
 
         var b = this.player.body;
         b.bounce.y = 0.2;
@@ -42,7 +47,10 @@ function Player(){
 
         engine.game.camera.follow(this.player);
 
-        var b = this.player.body;
+        this.oxygen.update();
+        this.jetpack.update();
+
+        var b = self.player.body;
 
         b.velocity.x = 0;
 
@@ -72,10 +80,10 @@ function Player(){
             }
         }
 
-        if(this.jumpButton.isDown && this.player.body.onFloor() && engine.game.time.now > this.jumpTimer){
-            b.velocity.y = -360;
-            this.jumpTimer = engine.game.time.now + 10;
-        }
+        // if(this.jumpButton.isDown && this.player.body.onFloor() && engine.game.time.now > this.jumpTimer){
+        //     b.velocity.y = -360;
+        //     this.jumpTimer = engine.game.time.now + 10;
+        // }
 
         this.pickaxe.update();
 
@@ -85,6 +93,126 @@ function Player(){
         var x = this.player.x + (this.player.width / 2);
         var y = this.player.y + (this.player.height / 2);
         return [x, y];
+    }
+
+}
+
+function Oxygen(){
+
+    const self = this;
+    this.decrease = 1;
+
+    const SIZE = 20;
+
+    const HEIGHT = engine.game.height - (SIZE * .5);
+
+    var value = engine.game.width;
+
+    // var bar = engine.game.add.graphics();
+    // bar.beginFill(0xffffff, 0.25);
+    // bar.drawRect(0, engine.game.height - SIZE, engine.game.width, SIZE);
+
+    var oxy = engine.game.add.graphics();
+    oxy.moveTo(0, HEIGHT);
+    // oxy.beginFill(0x0000ff, 1);
+    // oxy.drawRect(0, engine.game.height - SIZE, value, SIZE);
+    oxy.lineStyle(SIZE, 0x0000ff, 1);
+    oxy.lineTo(value--, HEIGHT);
+
+    this.update = function(){
+
+        if(game.player.player.y < (game.world.config.offset * BLOCK_SIZE)){
+            value = engine.game.width;
+            oxy.scale.x = ((value) / engine.game.width);
+            return;
+        }
+
+        oxy.scale.x = ((value) / engine.game.width);
+
+        value -= self.decrease;
+
+    }
+
+}
+
+function JettPack(){
+
+    const MAX = 200;
+    const POWER = 80;
+
+    const self = this;
+
+    this.decrease = 1;
+
+    const SIZE = 20;
+
+    var value = engine.game.width;
+
+    const HEIGHT = engine.game.height - (SIZE * .5) - 20;
+
+    // var bar = engine.game.add.graphics();
+    // bar.beginFill(0xffffff, 0.25);
+    // bar.drawRect(0, engine.game.height - SIZE, engine.game.width, SIZE);
+
+    var oxy = engine.game.add.graphics();
+    oxy.moveTo(0, HEIGHT);
+    // oxy.beginFill(0x0000ff, 1);
+    // oxy.drawRect(0, engine.game.height - SIZE, value, SIZE);
+    oxy.lineStyle(SIZE, 0xff6633, 1);
+    oxy.lineTo(value--, HEIGHT);
+
+
+    var emitter = game.add.emitter(0, 0, 500);
+
+    emitter.makeParticles( [ 'fire1', 'fire2', 'fire3', 'smoke' ] );
+
+    emitter.gravity = 200;
+    emitter.setAlpha(1, 0, 3000);
+    emitter.setScale(.25, 0, .25, 0, 500);
+
+    emitter.start(false, 3000, 5);
+
+    this.update = function(){
+
+        emitter.on = false;
+
+        var px = game.player.player.body.velocity.x;
+        var py = game.player.player.body.velocity.y;
+
+        // px *= -1;
+        // py *= -1;
+
+        // emitter.minParticleSpeed.set(px, py);
+        // emitter.maxParticleSpeed.set(px, py);
+
+        const tmp = game.player.getMiddle();
+
+        emitter.emitX = tmp[0];
+        emitter.emitY = tmp[1];
+
+        // emitter.forEachExists(game.world.wrap, game.world);
+        engine.game.world.wrap(game.player.player, 64);
+
+        if(game.player.cursors.up.isDown || game.player.jumpButton.isDown){
+
+
+            if(value <= 0){
+                return;
+            }
+
+            emitter.on = true;
+
+            game.player.player.body.velocity.y -= POWER;
+
+            if(game.player.player.body.velocity.y < -MAX){
+                game.player.player.body.velocity.y = -MAX;
+            }
+
+            oxy.scale.x = ((value) / engine.game.width);
+            value -= self.decrease;
+
+        }
+
     }
 
 }

@@ -83,6 +83,11 @@ MachineInvestigation.prototype.showHud = function(_obj){
 
     const off = 20;
 
+    var style = { font: "bold 64px Arial", fill: "#0f0", boundsAlignH: "center", boundsAlignV: "middle"};
+    var info = engine.game.add.text(this._hud.bounds.x, this._hud.bounds.y, "Investigation", style);
+    info.setTextBounds(off, off, this._hud.bounds.width - off * 2, this._hud.bounds.height - off * 2);
+    this._hud.group.add(info);
+
     var style = { font: "bold 32px Arial", fill: "#f00", boundsAlignH: "right", boundsAlignV: "bottom"};
 
     var exit = engine.game.add.text(this._hud.bounds.x, this._hud.bounds.y, "Close", style);
@@ -91,6 +96,12 @@ MachineInvestigation.prototype.showHud = function(_obj){
     exit.events.onInputDown.add(function(){
         _obj._hud.group.destroy();
         engine.game.paused = false;
+    });
+    exit.events.onInputOver.add(function(){
+        exit.tint = 0x00ff00;
+    });
+    exit.events.onInputOut.add(function(){
+        exit.tint = 0xffffff;
     });
 
     this._hud.group.add(exit);
