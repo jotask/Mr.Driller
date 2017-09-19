@@ -29,6 +29,12 @@ var game = {
     },
 
     render: function(){
+
+        if(engine.game.paused){
+            engine.game.tweens.update();
+            engine.game.particles.update();
+        }
+
         engine.game.debug.text(this.game.time.fps, 8, 16, 0x00ff00);
     }
 

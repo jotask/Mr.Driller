@@ -92,6 +92,10 @@ function Inventory() {
 
     function showInventory(){
 
+        if(engine.game.paused){
+            return;
+        }
+
         inventoryMenu.group = engine.game.add.group();
 
         {
@@ -131,6 +135,8 @@ function Inventory() {
             var button = engine.game.make.button(x, y, 'button', function removeGroup() {}, this, 2, 1, 0);
             button.width = w;
             button.height = h;
+
+            button.input.priorityID = Number.MAX_VALUE;
 
             var number = engine.game.add.text(x, y, tmp.quantity, { font: '30px Arial', fill: '#f00' });
 

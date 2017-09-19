@@ -7,6 +7,9 @@ function Pickaxe(_p){
 
     var player = _p;
     this.MAX_DISTANCE = 70;
+
+    this.level = 1;
+
     this.POWER = 100;
 
     var a = engine.game.add.sprite(Number.MAX_VALUE, Number.MAX_VALUE, 'breaking');
@@ -99,7 +102,8 @@ function Pickaxe(_p){
             }
 
             if(mining.block === other){
-                mining.health -= self.POWER;
+
+                mining.health -= self.POWER * self.level;
 
                 var percentage = calculatePercentage(mining.block, mining.health);
 

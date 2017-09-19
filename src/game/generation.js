@@ -5,7 +5,7 @@
 function WorldConfig(){
 
     this.width = (WIDTH / BLOCK_SIZE);
-    this.height = 15;
+    this.height = 50;
 
     this.offset = 5;
 

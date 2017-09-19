@@ -10,7 +10,7 @@ function Player(){
         self.oxygen = new Oxygen();
         self.jetpack = new JettPack();
 
-        self.money = 100;
+        self.money = new Money();
 
         self.player = engine.game.add.sprite(WIDTH / 2, 0, 'player');
 
@@ -80,6 +80,12 @@ function Player(){
             }
         }
 
+        if(this.facing == 'idle'){
+            if(this.player.body.velocity.x == 0  && this.player.body.velocity.y < 0)
+            this.player.frame = 4;
+        }
+
+        // Jump action removed due the jetpack implementation
         // if(this.jumpButton.isDown && this.player.body.onFloor() && engine.game.time.now > this.jumpTimer){
         //     b.velocity.y = -360;
         //     this.jumpTimer = engine.game.time.now + 10;
@@ -100,38 +106,43 @@ function Player(){
 function Oxygen(){
 
     const self = this;
+
     this.decrease = 1;
+
+    this.level = 1;
 
     const SIZE = 20;
 
+    const MAXVALUE = engine.game.width;
+
     const HEIGHT = engine.game.height - (SIZE * .5);
 
-    var value = engine.game.width;
-
-    // var bar = engine.game.add.graphics();
-    // bar.beginFill(0xffffff, 0.25);
-    // bar.drawRect(0, engine.game.height - SIZE, engine.game.width, SIZE);
+    var value = MAXVALUE;
 
     var oxy = engine.game.add.graphics();
     oxy.moveTo(0, HEIGHT);
-    // oxy.beginFill(0x0000ff, 1);
-    // oxy.drawRect(0, engine.game.height - SIZE, value, SIZE);
+
     oxy.lineStyle(SIZE, 0x0000ff, 1);
     oxy.lineTo(value--, HEIGHT);
 
     this.update = function(){
 
         if(game.player.player.y < (game.world.config.offset * BLOCK_SIZE)){
-            value = engine.game.width;
+            value = MAXVALUE;
             oxy.scale.x = ((value) / engine.game.width);
             return;
         }
 
         oxy.scale.x = ((value) / engine.game.width);
 
-        value -= self.decrease;
+        value -= (self.decrease / self.level);
 
-    }
+    };
+
+    this.fill = function(){
+        value = MAXVALUE;
+        oxy.scale.x = 1;
+    };
 
 }
 
@@ -142,25 +153,22 @@ function JettPack(){
 
     const self = this;
 
-    this.decrease = 1;
+    this.level = UpgradesItems.FUEL.level;
+    this.decrease = 5;
 
     const SIZE = 20;
 
-    var value = engine.game.width;
+    const MAXVALUE = engine.game.width;
+
+    var value = MAXVALUE;
 
     const HEIGHT = engine.game.height - (SIZE * .5) - 20;
 
-    // var bar = engine.game.add.graphics();
-    // bar.beginFill(0xffffff, 0.25);
-    // bar.drawRect(0, engine.game.height - SIZE, engine.game.width, SIZE);
-
     var oxy = engine.game.add.graphics();
     oxy.moveTo(0, HEIGHT);
-    // oxy.beginFill(0x0000ff, 1);
-    // oxy.drawRect(0, engine.game.height - SIZE, value, SIZE);
-    oxy.lineStyle(SIZE, 0xff6633, 1);
-    oxy.lineTo(value--, HEIGHT);
 
+    oxy.lineStyle(SIZE, 0xff6633, 1);
+    oxy.lineTo(value, HEIGHT);
 
     var emitter = game.add.emitter(0, 0, 500);
 
@@ -176,27 +184,17 @@ function JettPack(){
 
         emitter.on = false;
 
-        var px = game.player.player.body.velocity.x;
-        var py = game.player.player.body.velocity.y;
-
-        // px *= -1;
-        // py *= -1;
-
-        // emitter.minParticleSpeed.set(px, py);
-        // emitter.maxParticleSpeed.set(px, py);
-
         const tmp = game.player.getMiddle();
 
         emitter.emitX = tmp[0];
         emitter.emitY = tmp[1];
 
-        // emitter.forEachExists(game.world.wrap, game.world);
-        engine.game.world.wrap(game.player.player, 64);
+        // engine.game.world.wrap(game.player.player, 64);
 
         if(game.player.cursors.up.isDown || game.player.jumpButton.isDown){
 
 
-            if(value <= 0){
+            if(value <= 0 && !GOD){
                 return;
             }
 
@@ -209,10 +207,16 @@ function JettPack(){
             }
 
             oxy.scale.x = ((value) / engine.game.width);
-            value -= self.decrease;
+
+            value -= self.decrease / self.level;
 
         }
 
-    }
+    };
+
+    this.fill = function(){
+        value = MAXVALUE;
+        oxy.scale.x = 1;
+    };
 
 }

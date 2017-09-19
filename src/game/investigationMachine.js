@@ -48,7 +48,8 @@ MachineInvestigation = function () {
     this._selected.visible = false;
 
     this.events.onInputOver.add(function(){
-        self._selected.visible = true;
+        if(!engine.game.paused)
+            self._selected.visible = true;
     });
     this.events.onInputOut.add(function(){
         self._selected.visible = false;
@@ -60,6 +61,11 @@ MachineInvestigation.prototype = Object.create(Phaser.Sprite.prototype);
 MachineInvestigation.prototype.constructor = MachineInvestigation;
 
 MachineInvestigation.prototype.showHud = function(_obj){
+
+    if(engine.game.paused){
+        return;
+    }
+    this._selected.visible = false;
 
     this._hud.group = engine.game.add.group();
 

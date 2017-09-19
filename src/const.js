@@ -21,11 +21,24 @@ const Blocks = {
     FOSSIL: { id: 8, breakable: true, health: 300, weight: 1}
 };
 
+const ShopItems = {
+    REFUEL: {price: 10, text: "Refuel", desc: "Fill your jetpack with fuel.", special: true, action: function(){ game.player.jetpack.fill(); }},
+    OXYGEN: {price: 100, text: "Oxygen", desc: "Description.", special: true, action: function(){ game.player.oxygen.fill(); }}
+};
+
+const UpgradesItems = {
+    FUEL: {price: 100, text: "Fuel tank", desc: "Increase the fuel your jetpack can carry on.", level: 1, action: function(){ game.player.jetpack.level = this.level; }},
+    OXYGEN: {price: 100, text: "Oxygen", desc: "Increase the amount of oxygen.", level: 1, action: function(){ game.player.oxygen.level = this.level; }},
+    PICKAXE: {price: 100, text: "Pickaxe", desc: "Increase the velocity of the pickaxe.", level: 1, action: function(){ game.player.pickaxe.level = this.level; }}
+};
+
 const Dinosaurs = {
     ONE: {id: 1},
     TWO: {id: 2},
     THREE: {id: 3}
 };
+
+const GOD = true;
 
 const WIDTH = 640;
 const HEIGHT = 480;
