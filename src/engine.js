@@ -60,3 +60,6 @@ function Engine(){
 
     };
 }
+
+// TODO save and load game
+// http://www.thebotanistgame.com/blog/2015/08/12/saving-loading-game-state-phaserjs.html

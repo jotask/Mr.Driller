@@ -23,7 +23,7 @@ Shop = function () {
 
     this.inputEnabled = true;
 
-    this.events.onInputDown.add(this.showHud, this);
+    this.events.onInputDown.add(this.openHud, this);
 
     const self = this;
 
@@ -38,6 +38,8 @@ Shop = function () {
     this.smoothed = false;
 
     engine.game.add.existing(this);
+
+    this.test = 23;
 
     this._hud = {
         offset: 5,
@@ -65,7 +67,12 @@ Shop = function () {
 Shop.prototype = Object.create(Phaser.Sprite.prototype);
 Shop.prototype.constructor = Shop;
 
-Shop.prototype.showHud = function(_obj){
+Shop.prototype.closeHud = function (){
+    this.shop._hud.group.destroy();
+    engine.game.paused = false;
+};
+
+Shop.prototype.openHud = function (_shop){
 
     if(engine.game.paused){
         return;
@@ -101,10 +108,7 @@ Shop.prototype.showHud = function(_obj){
     var exit = engine.game.add.text(this._hud.bounds.x, this._hud.bounds.y, "Close", style);
     exit.setTextBounds(off, off, this._hud.bounds.width - off * 2, this._hud.bounds.height - off * 2);
     exit.inputEnabled = true;
-    exit.events.onInputDown.add(function(){
-        _obj._hud.group.destroy();
-        engine.game.paused = false;
-    });
+    exit.events.onInputDown.add(this.closeHud, { shop: _shop });
     exit.events.onInputOver.add(function(){
         exit.tint = 0x00ff00;
     });
@@ -212,12 +216,12 @@ Shop.prototype.showHud = function(_obj){
                 var s = "Click for sell " + item.quantity + " of " +  item.block.name + " for " + val + "$.";
                 text.setText(s);
             }, this);
+
             button.onInputOut.add(function(){
                 text.setText("Click any item to sell it.");
             }, this);
-            button.onInputUp.add(function(_obj){
-                sellItem(_obj);
-            }, this);
+
+            button.onInputUp.add( sellItem ,{ btn: button, shop: _shop });
 
             button.input.priorityID = Number.MAX_VALUE;
 
@@ -336,14 +340,19 @@ Shop.prototype.showHud = function(_obj){
 
     }
 
-};
+    function sellItem(){
+        var item = this.btn.item;
+        game.player.money.money += item.quantity * item.block.value;
+        game.player.inventory.delete(item, item.quantity);
+        this.btn.number.destroy();
+        this.btn.img.destroy();
+        this.btn.destroy();
 
-function sellItem(_btn){
-    var item = _btn.item;
-    game.player.money.money += item.quantity * item.block.value;
-    game.player.inventory.delete(item, item.quantity);
-    console.log(item.block);
-    _btn.number.destroy();
-    _btn.img.destroy();
-    _btn.destroy();
-}
+        this.shop._hud.group.destroy();
+        engine.game.paused = false;
+
+        this.shop.openHud(this.shop);
+
+    }
+
+};
