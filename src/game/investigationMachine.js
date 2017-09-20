@@ -14,7 +14,9 @@ MachineInvestigation = function () {
 
     Phaser.Sprite.call(this, engine.game, x, y, 'investigating');
 
-    this.frame = 0;
+    this.animations.add("run", [0, 1, 2, 3], 20, true);
+    this.animations.play("run");
+    this.animations.currentAnim.speed = 5;
 
     this.inputEnabled = true;
 

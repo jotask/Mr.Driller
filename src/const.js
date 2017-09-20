@@ -9,21 +9,21 @@ const STATES = {
 };
 
 const Blocks = {
-    AIR: { id: -1, breakable: false, health: -1, weight: 1},
-    GRASS: { id: 0, breakable: false, health: -1, weight: 1},
-    DIRT: { id: 1, breakable: true, health: 100, weight: 1},
-    STONE: { id: 2, breakable: true, health: 100, weight: 1},
-    OBSIDIAN: { id: 3, breakable: false, health: -1, weight: 1},
-    SKY: { id: 4, breakable: true, health: 100, weight: 1},
-    WHITE: { id: 5, breakable: true, health: 100, weight: 1},
-    IRON: { id: 6, breakable: true, health: 200, weight: 1},
-    GOLD: { id: 7, breakable: true, health: 300, weight: 1},
-    FOSSIL: { id: 8, breakable: true, health: 300, weight: 1}
+    AIR: { id: -1, breakable: false, health: -1, weight: 1, value: 100, name: "Air"},
+    GRASS: { id: 0, breakable: false, health: -1, weight: 1, value: 100, name: "Grass"},
+    DIRT: { id: 1, breakable: true, health: 100, weight: 1, value: 100, name: "Dirt"},
+    STONE: { id: 2, breakable: true, health: 100, weight: 1, value: 100, name: "Stone"},
+    OBSIDIAN: { id: 3, breakable: false, health: -1, weight: 1, value: 100, name: "Obsidian"},
+    SKY: { id: 4, breakable: true, health: 100, weight: 1, value: 100, name: "Sky"},
+    WHITE: { id: 5, breakable: true, health: 100, weight: 1, value: 100, name: "White"},
+    IRON: { id: 6, breakable: true, health: 200, weight: 1, value: 100, name: "Iron"},
+    GOLD: { id: 7, breakable: true, health: 300, weight: 1, value: 100, name: "Gold"},
+    FOSSIL: { id: 8, breakable: true, health: 300, weight: 1, value: 100, name: "Fossil"}
 };
 
 const ShopItems = {
     REFUEL: {price: 10, text: "Refuel", desc: "Fill your jetpack with fuel.", special: true, action: function(){ game.player.jetpack.fill(); }},
-    OXYGEN: {price: 100, text: "Oxygen", desc: "Description.", special: true, action: function(){ game.player.oxygen.fill(); }}
+    OXYGEN: {price: 105, text: "Oxygen", desc: "Description.", special: true, action: function(){ game.player.oxygen.fill(); }}
 };
 
 const UpgradesItems = {

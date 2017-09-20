@@ -21,6 +21,7 @@ UpgradesMachine = function () {
 
     this.animations.add("run", [0, 1, 2, 3], 20, true);
     this.animations.play("run");
+    this.animations.currentAnim.speed = 5;
 
     this.inputEnabled = true;
 
@@ -192,6 +193,7 @@ UpgradesMachine.prototype.showHud = function(_obj){
         item.level++;
         item.price = test(item.price);
         _obj.itemPrice.setText(item.price + "$");
+        _obj.itemLevel.setText("Level: " + item.level);
 
         item.action();
 

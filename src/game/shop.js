@@ -17,7 +17,9 @@ Shop = function () {
 
     Phaser.Sprite.call(this, engine.game, x, y, 'shop');
 
-    this.frame = 0;
+    this.animations.add("run", [0, 1, 2, 3], 20, true);
+    this.animations.play("run");
+    this.animations.currentAnim.speed = 5;
 
     this.inputEnabled = true;
 
@@ -133,8 +135,17 @@ Shop.prototype.showHud = function(_obj){
 
 
         var bg = engine.game.add.graphics();
-        bg.beginFill(0xff0000, 0.5);
+
+        var color = 0xff0000;
+
+        if(game.player.money.money >= c["price"]){
+            color = 0x00ff00;
+        }
+
+        bg.beginFill(color, 0.5);
         bg.drawRect(button.x, button.y, button.width, button.height);
+
+        button.bg = bg;
 
         this._hud.group.add(button);
         this._hud.group.add(bg);
@@ -155,6 +166,98 @@ Shop.prototype.showHud = function(_obj){
         this._hud.group.add(price);
 
         i += SIEZ + off * .5;
+
+    }
+
+    {
+        // Creating all the items in inventory
+
+        var x = this._hud.bounds.x + off;
+        var y = this._hud.bounds.y + off + i;
+        var w = this._hud.bounds.width - (off * 2);
+        var h = SIEZ * 5;
+
+        var inventory = engine.game.add.group();
+
+        var bar = engine.game.add.graphics();
+        bar.beginFill(0xffffff, 0.75);
+        bar.drawRect(x,y,w,h);
+
+        inventory.add(bar);
+
+        const width = w / 6;
+        const height = h / 3;
+
+        var items = game.player.inventory.items;
+
+        const MAX_ITEMS = 10;
+
+        for(var i = 0; i < MAX_ITEMS; i++) {
+
+            var tmp = undefined;
+
+            tmp = items[i];
+
+            if(!tmp){
+                continue;
+            }
+
+            var button = engine.game.make.button(x, y, 'button', function removeGroup() {}, this, 2, 1, 0);
+            button.width = width;
+            button.height = height;
+
+            button.onInputOver.add(function(_obj){
+                var item = _obj.item;
+                var val = item.quantity * item.block.value;
+                var s = "Click for sell " + item.quantity + " of " +  item.block.name + " for " + val + "$.";
+                text.setText(s);
+            }, this);
+            button.onInputOut.add(function(){
+                text.setText("Click any item to sell it.");
+            }, this);
+            button.onInputUp.add(function(_obj){
+                sellItem(_obj);
+            }, this);
+
+            button.input.priorityID = Number.MAX_VALUE;
+
+            // TODO align text
+            var number = engine.game.add.text(x + 60, y + 50, tmp.quantity, { font: '30px Arial', fill: '#f00' });
+
+            button.item = tmp;
+
+            var img = engine.game.add.sprite(x + 3, y + 3, 'blocks');
+            img.width = width - 7 - 3;
+            img.height = height - 8 - 3;
+
+            img.frame = tmp.block.id;
+
+            img.smoothed = false;
+
+            button.img = img;
+            button.number = number;
+
+            inventory.add(button);
+            inventory.add(img);
+            inventory.add(number);
+
+            if(MAX_ITEMS / 2 == i + 1){
+                y += height;
+                x = this._hud.bounds.x + off;
+            }else{
+                x += width;
+            }
+
+        }
+
+        var yyy = this._hud.bounds.height - 100;
+
+        var text = engine.game.add.text(this._hud.bounds.x + off * 1.5, yyy, "Click any item to sell it.");
+        text.visible = true;
+
+        inventory.add(text);
+
+        this._hud.group.add(inventory);
 
     }
 
@@ -234,3 +337,13 @@ Shop.prototype.showHud = function(_obj){
     }
 
 };
+
+function sellItem(_btn){
+    var item = _btn.item;
+    game.player.money.money += item.quantity * item.block.value;
+    game.player.inventory.delete(item, item.quantity);
+    console.log(item.block);
+    _btn.number.destroy();
+    _btn.img.destroy();
+    _btn.destroy();
+}

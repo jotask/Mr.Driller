@@ -125,6 +125,8 @@ function Oxygen(){
     oxy.lineStyle(SIZE, 0x0000ff, 1);
     oxy.lineTo(value--, HEIGHT);
 
+    oxy.fixedToCamera = true;
+
     this.update = function(){
 
         if(game.player.player.y < (game.world.config.offset * BLOCK_SIZE)){
@@ -166,9 +168,10 @@ function JettPack(){
 
     var oxy = engine.game.add.graphics();
     oxy.moveTo(0, HEIGHT);
-
     oxy.lineStyle(SIZE, 0xff6633, 1);
     oxy.lineTo(value, HEIGHT);
+
+    oxy.fixedToCamera = true;
 
     var emitter = game.add.emitter(0, 0, 500);
 

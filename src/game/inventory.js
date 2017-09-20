@@ -8,7 +8,9 @@ function Inventory() {
     // TODO implement weight system for the inventory
     const MAX_WEIGHT = MAX_ITEMS;
 
-    var items = [];
+    const self = this;
+
+    this.items = [];
 
     var inventoryMenu = {
         offset: 5,
@@ -21,28 +23,29 @@ function Inventory() {
     var pause_label = game.add.text(WIDTH - 120, 20, 'Inventory', { font: '24px Arial', fill: '#fff' });
     pause_label.inputEnabled = true;
     pause_label.events.onInputUp.add(showInventory);
+    pause_label.fixedToCamera = true;
 
     this.pickUp = function(_block) {
-        if (items.length > MAX_ITEMS) {
+        if (self.items.length > MAX_ITEMS) {
             console.log("inventory full");
         }else {
             for (var i = 0; i < MAX_ITEMS; i++) {
-                var tmp = items[i];
+                var tmp = self.items[i];
                 if(tmp == undefined){
                     continue;
                 }
                 if (tmp.block.id == _block.type.id) {
                     tmp.quantity++;
-                    console.log(_block.type.id + " item added in position: " + i + ". Quantity : " + items[i].quantity);
+                    // console.log(_block.type.id + " item added in position: " + i + ". Quantity : " + items[i].quantity);
                     return;
                 }
             }
             // If is not found add the item into the array in the first empty slot
             for (var i = 0; i < MAX_ITEMS; i++) {
-                if(items[i] == undefined){
-                    items[i] = new Item(_block.type);
-                    items[i].quantity++;
-                    console.log("Item created into inventory");
+                if(self.items[i] == undefined){
+                    self.items[i] = new Item(_block.type);
+                    self.items[i].quantity++;
+                    // console.log("Item created into inventory");
                     return;
                 }
             }
@@ -52,43 +55,71 @@ function Inventory() {
 
     };
 
-    this.delete = function(_block){
-        for (var i = 0; i < items.length; i++) {
-            var tmp = items[i];
-            if(tmp.block.id == _block.id){
+    this.delete = function(_item, _many){
+
+        var many = 0;
+
+        if(_many == undefined)
+            many = 1;
+        else
+            many = _many;
+
+        var index = self.items.indexOf(_item);
+
+        if(index > -1){
+            var tmp = self.items[index];
+            for(var z = 0; z < many; z++) {
                 tmp.quantity--;
-
-                if(tmp.quantity < 1){
-                    delete items[i];
-                    console.log("item deleted", items[i]);
-                }
-
-                console.log("item found in inventory and removed one");
             }
+
+            if(tmp.quantity < 1){
+                self.items.splice(index, 1);
+                return;
+            }
+        }else{
+            console.log("item not found in inventory", _item);
         }
-        console.log("item not found");
+
+        // for (var i = 0; i < MAX_ITEMS; i++) {
+        //     var tmp = self.items[i];
+        //     if(tmp.block.id == _item.block.id){
+        //
+        //         for(var z = 0; z < many; z++) {
+        //             tmp.quantity--;
+        //         }
+        //
+        //         if(tmp.quantity < 1){
+        //             // self.items[i] = undefined;
+        //             return;
+        //         }
+        //
+        //     }
+        // }
+
     };
 
-    // for(var i = 0; i < 10; i++){
-    //     var rnd = Math.round(Math.random() * 10);
-    //
-    //     var type = Blocks.DIRT;
-    //
-    //     if(rnd < 2){
-    //         type = Blocks.GOLD;
-    //     }else if(rnd < 4){
-    //         type = Blocks.IRON;
-    //     }else if(rnd < 6){
-    //         type = Blocks.GRASS;
-    //     }else if(rnd < 7){
-    //         type = Blocks.OBSIDIAN;
-    //     }
-    //
-    //     console.log(rnd);
-    //
-    //     var block = new Block(0,0,type);
-    //     this.pickUp(block);
-    // }
+    for(var i = 0; i < 100; i++){
+        var rnd = Math.round(Math.random() * 10);
+
+        var type = Blocks.DIRT;
+
+        if(rnd < 2){
+            type = Blocks.GOLD;
+        }else if(rnd < 4){
+            type = Blocks.IRON;
+        }else if(rnd < 6){
+            type = Blocks.GRASS;
+        }else if(rnd < 7){
+            type = Blocks.OBSIDIAN;
+        }else if(rnd < 8){
+            type = Blocks.FOSSIL;
+        }
+
+        // console.log(rnd);
+
+        var block = new Block(0,0,type);
+        this.pickUp(block);
+    }
 
     function showInventory(){
 
@@ -126,7 +157,7 @@ function Inventory() {
 
             var tmp = undefined;
 
-            tmp = items[i];
+            tmp = self.items[i];
 
             if(!tmp){
                 continue;
@@ -154,7 +185,7 @@ function Inventory() {
 
             if(MAX_ITEMS / 2 == i + 1){
                 y += h;
-                x = inventoryMenu.bounds.x;
+                x = inventoryMenu.bounds.x + 4;
             }else{
                 x += w;
             }
