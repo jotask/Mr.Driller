@@ -5,6 +5,7 @@
 function Inventory() {
 
     const MAX_ITEMS = 10;
+
     // TODO implement weight system for the inventory
     const MAX_WEIGHT = MAX_ITEMS;
 
@@ -16,8 +17,6 @@ function Inventory() {
         offset: 5,
         group: null,
         bounds: new Phaser.Rectangle(0,0,0,0)
-        // ,
-        // bg: engine.game.add.sprite(-Number.MAX_VALUE,-Number.MAX_VALUE, 'selection')
     };
 
     var pause_label = game.add.text(WIDTH - 120, 20, 'Inventory', { font: '24px Arial', fill: '#fff' });

@@ -25,7 +25,7 @@ UpgradesMachine = function () {
 
     this.inputEnabled = true;
 
-    this.events.onInputDown.add(this.showHud, this);
+    this.events.onInputDown.add(this.openHud, this);
 
     const self = this;
 
@@ -67,7 +67,12 @@ UpgradesMachine = function () {
 UpgradesMachine.prototype = Object.create(Phaser.Sprite.prototype);
 UpgradesMachine.prototype.constructor = UpgradesMachine;
 
-UpgradesMachine.prototype.showHud = function(_obj){
+UpgradesMachine.prototype.closeHud = function() {
+    this.obj._hud.group.destroy();
+    engine.game.paused = false;
+};
+
+UpgradesMachine.prototype.openHud = function(_obj){
 
     if(engine.game.paused){
         return;
@@ -102,10 +107,7 @@ UpgradesMachine.prototype.showHud = function(_obj){
     var exit = engine.game.add.text(this._hud.bounds.x, this._hud.bounds.y, "Close", style);
     exit.setTextBounds(off, off, this._hud.bounds.width - off * 2, this._hud.bounds.height - off * 2);
     exit.inputEnabled = true;
-    exit.events.onInputDown.add(function(){
-        _obj._hud.group.destroy();
-        engine.game.paused = false;
-    });
+    exit.events.onInputDown.add(this.closeHud, { obj: _obj });
     exit.events.onInputOver.add(function(){
         exit.tint = 0x00ff00;
     });
@@ -129,13 +131,23 @@ UpgradesMachine.prototype.showHud = function(_obj){
         const w = this._hud.bounds.width - (off * 2);
         const h = SIEZ;
 
-        var button = engine.game.make.button(x, y, null, itemClicked, this, 2, 1, 0);
+        var button = engine.game.make.button(x, y, null, null, this, 2, 1, 0);
         button.width = w;
         button.height = h;
         button.input.priorityID = Number.MAX_VALUE;
 
+        button.onInputUp.add( itemClicked, { btn: button, hud: _obj} );
+
         var bg = engine.game.add.graphics();
-        bg.beginFill(0xff0000, 0.5);
+
+        var color = 0xff0000;
+
+        if(game.player.money.money >= c["price"]){
+            color = 0x00ff00;
+        }
+
+        bg.beginFill(color, 0.5);
+
         bg.drawRect(button.x, button.y, button.width, button.height);
 
         this._hud.group.add(button);
@@ -150,8 +162,6 @@ UpgradesMachine.prototype.showHud = function(_obj){
         var lvl = engine.game.add.text(x + 450, y + 8, "Level: " + c["level"]);
 
         button.itemId = c;
-        button.itemLevel = lvl;
-        button.itemPrice = price;
 
         this._hud.group.add(txt);
         this._hud.group.add(dsc);
@@ -174,28 +184,24 @@ UpgradesMachine.prototype.showHud = function(_obj){
     engine.game.world.bringToTop(this._hud.group);
     this._hud.group.inputEnableChildren = true;
 
-    function itemClicked(_obj){
-        const item = _obj.itemId;
+    function itemClicked(){
+        const item = this.btn.itemId;
 
         if(item.price > game.player.money.money){
             notEnoughtMoney(money);
             return;
         }
 
-        if(item.special){
-            console.log(item);
-        }
-
         game.player.money.money -= item.price;
-
-        money.setText("Money: " + game.player.money.money + "$");
 
         item.level++;
         item.price = test(item.price);
-        _obj.itemPrice.setText(item.price + "$");
-        _obj.itemLevel.setText("Level: " + item.level);
 
         item.action();
+
+        this.hud._hud.group.destroy();
+        engine.game.paused = false;
+        this.hud.openHud(this.hud);
 
     }
 

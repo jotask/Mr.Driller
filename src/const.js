@@ -27,8 +27,8 @@ const ShopItems = {
 };
 
 const UpgradesItems = {
-    FUEL: {price: 100, text: "Fuel tank", desc: "Increase the fuel your jetpack can carry on.", level: 1, action: function(){ game.player.jetpack.level = this.level; }},
-    OXYGEN: {price: 100, text: "Oxygen", desc: "Increase the amount of oxygen.", level: 1, action: function(){ game.player.oxygen.level = this.level; }},
+    FUEL: {price: 0, text: "Fuel tank", desc: "Increase the fuel your jetpack can carry on.", level: 1, action: function(){ game.player.jetpack.level = this.level; }},
+    OXYGEN: {price: 50, text: "Oxygen", desc: "Increase the amount of oxygen.", level: 1, action: function(){ game.player.oxygen.level = this.level; }},
     PICKAXE: {price: 100, text: "Pickaxe", desc: "Increase the velocity of the pickaxe.", level: 1, action: function(){ game.player.pickaxe.level = this.level; }}
 };
 
