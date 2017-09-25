@@ -128,11 +128,17 @@ function Inventory() {
 
         inventoryMenu.group = engine.game.add.group();
 
+
+        console.log(engine.game.camera.x, engine.game.camera.y);
+
         {
+
+            const cam = engine.game.camera;
+
             var xx = 100;
             var yy = 100;
-            var ww = WIDTH - xx * 2;
-            var hh = HEIGHT - yy * 2;
+            var ww = (WIDTH - xx * 2);
+            var hh = (HEIGHT - yy * 2);
 
             inventoryMenu.bounds.setTo(xx, yy, ww, hh);
 
