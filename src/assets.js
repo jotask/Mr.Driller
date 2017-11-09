@@ -29,6 +29,8 @@ function Assets() {
         load.spritesheet('upgrades', 'assets/upgrades_machines.png', 64, 64);
         load.spritesheet('shop', 'assets/shop.png', 90, 65);
 
+        load.spritesheet('factcards', 'assets/factcards.jpg', 128, 64);
+
     };
 
 }

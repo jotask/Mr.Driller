@@ -33,15 +33,15 @@ const UpgradesItems = {
 };
 
 const Dinosaurs = {
-    ONE: {id: 1, current: 100, price: 100},
-    TWO: {id: 2, current: 98, price: 100},
-    THREE: {id: 3, current: 10, price: 100},
-    FOUR: {id: 4, current: 0, price: 100},
-    FIVE: {id: 5, current: 0, price: 100},
-    SIX: {id: 6, current: 0, price: 100},
-    SEVEN: {id: 7, current: 0, price: 100},
-    EIGHT: {id: 8,current: 0, price: 100},
-    NINE: {id: 9, current: 0, price: 100}
+    ONE: {id: 1, current: 0, price: 100, unlocked: true},
+    TWO: {id: 2, current: 0, price: 0, unlocked: false},
+    THREE: {id: 3, current: 0, price: 99, unlocked: false},
+    FOUR: {id: 4, current: 0, price: 50, unlocked: false},
+    FIVE: {id: 5, current: 0, price: 1000, unlocked: false},
+    SIX: {id: 6, current: 0, price: 80, unlocked: false},
+    SEVEN: {id: 7, current: 0, price: 100, unlocked: true},
+    EIGHT: {id: 8,current: 0, price: 100, unlocked: false},
+    NINE: {id: 9, current: 0, price: 600, unlocked: false}
 };
 
 const GOD = true;
