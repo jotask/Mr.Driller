@@ -10,6 +10,7 @@ var game = {
         this.world = new World();
         this.world.init();
 
+        new Options();
         new MachineInvestigation();
         new Shop();
         new UpgradesMachine();
