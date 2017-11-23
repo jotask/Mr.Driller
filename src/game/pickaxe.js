@@ -190,4 +190,16 @@ function Pickaxe(_p){
     engine.game.input.onDown.add(press, this);
     engine.game.input.onUp.add(release, this);
 
+    this.save = function() {
+        localStorage.setItem("pickaxe_maxdst", this.MAX_DISTANCE);
+        localStorage.setItem("pickaxe_power", this.POWER);
+        localStorage.setItem("pickaxe_level", this.level);
+    };
+
+    this.load = function(){
+        this.MAX_DISTANCE = localStorage.getItem("pickaxe_maxdst") ||this.MAX_DISTANCE;
+        this.level = localStorage.getItem("pickaxe_level") ||this.level;
+        this.POWER = localStorage.getItem("pickaxe_power") ||this.POWER;
+    };
+
 }

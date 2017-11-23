@@ -39,8 +39,6 @@ Shop = function () {
 
     engine.game.add.existing(this);
 
-    this.test = 23;
-
     this._hud = {
         offset: 5,
         group: null,
@@ -355,4 +353,14 @@ Shop.prototype.openHud = function (_shop){
 
     }
 
+};
+
+Shop.prototype.save = function(){
+    localStorage.setItem("shop_refuel", ShopItems.REFUEL.price);
+    localStorage.setItem("shop_oxygen", ShopItems.OXYGEN.price);
+};
+
+Shop.prototype.load = function(){
+    ShopItems.OXYGEN.price = localStorage.getItem("shop_oxygen") ||ShopItems.OXYGEN.price;
+    ShopItems.REFUEL.price = localStorage.getItem("shop_refuel") ||ShopItems.REFUEL.price;
 };

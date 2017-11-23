@@ -5,34 +5,18 @@ function World(){
 
     this.config = new WorldConfig();
 
+    const self = this;
+
     this.init = function(){
+
+        self.deleted = [];
 
         engine.game.physics.arcade.gravity.y = 1000;
 
-        this.bg = engine.game.add.tileSprite(0,-200,800, 600, 'background');
+        self.bg = engine.game.add.tileSprite(0,-200,800, 600, 'background');
         engine.game.stage.backgroundColor = '#000000';
 
-        var gen = new Generation(this.config);
-        gen.generateWorld();
-
-        this.blocks = gen.blocks;
-        this.data = gen.data;
-
-        //  Add data to the cache
-        engine.game.cache.addTilemap('map', null, this.data, Phaser.Tilemap.CSV);
-
-        //  Create our map (the 16x16 is the tile size)
-        this.map = engine.game.add.tilemap('map', BLOCK_SIZE, BLOCK_SIZE);
-
-        //  'tiles' = cache image key, 16x16 = tile size
-        this.map.addTilesetImage('tiles', 'tiles', BLOCK_SIZE, BLOCK_SIZE);
-
-        // this.map.setCollisionBetween(0,4);
-        this.map.setCollisionByExclusion([ 4, 5 ]);
-
-        //  0 is important
-        this.layer = this.map.createLayer(0, WIDTH, HEIGHT);
-        // this.layer.debug = true;
+        self.load();
 
         // Create custom bounds
         var bounds = new Phaser.Rectangle(0, 0, WIDTH, (BLOCK_SIZE * this.config.height));
@@ -45,10 +29,33 @@ function World(){
 
     };
 
-    this.pick = function(x, y){
 
-        var tile = this.map.getTile(x, y, this.layer);
-        var block = this.blocks[x][y];
+    var generateWorld = function(data, blocks){
+
+        self.data = data;
+        self.blocks = blocks;
+
+        //  Add data to the cache
+        engine.game.cache.addTilemap('map', null, data, Phaser.Tilemap.CSV);
+
+        //  Create our map (the 16x16 is the tile size)
+        self.map = engine.game.add.tilemap('map', BLOCK_SIZE, BLOCK_SIZE);
+
+        //  'tiles' = cache image key, 16x16 = tile size
+        self.map.addTilesetImage('tiles', 'tiles', BLOCK_SIZE, BLOCK_SIZE);
+
+        // this.map.setCollisionBetween(0,4);
+        self.map.setCollisionByExclusion([4, 5]);
+
+        //  0 is important
+        self.layer = self.map.createLayer(0, WIDTH, HEIGHT);
+        // self.layer.debug = true;
+    };
+
+    this.pick = function(x, y, spawn){
+
+        var tile = self.map.getTile(x, y, this.layer);
+        var block = self.blocks[x][y];
 
         if(!tile) {
             console.error("[world.js::64] tile is null");
@@ -61,19 +68,55 @@ function World(){
         }
 
         if(block.type.breakable){
-            // game.player.inventory.pickUp(block);
 
-            new ItemEntity(block);
+            // game.player.inventory.pickUp(block);
+            self.deleted.push( {x: x, y: y} );
+
+            if(!spawn)
+                new ItemEntity(block);
 
             // TODO set the block to empty
             // this.blocks[x][y] = Blocks.AIR;
-            this.map.removeTile(x, y, this.layer);
+            self.map.removeTile(x, y, this.layer);
         }
 
     };
 
     this.checkCollision = function(_enitity) {
-        game.physics.arcade.collide(_enitity, this.layer);
+        game.physics.arcade.collide(_enitity, self.layer);
+    };
+
+    this.load = function(){
+
+        var data = localStorage.getItem("world_data");
+        var blocks = localStorage.getItem("world_block");
+        var deleted = localStorage.getItem("world_deleted");
+
+        if(!data || !blocks){
+            var gen = new Generation(this.config);
+            gen.generateWorld();
+            blocks = gen.blocks;
+            data = gen.data;
+            deleted = [];
+        }else{
+            data = JSON.parse(data);
+            blocks = JSON.parse(blocks);
+            deleted = JSON.parse(deleted);
+        }
+
+        generateWorld(data, blocks);
+
+        for(var i = 0; i < deleted.length; i++){
+            var tmp = deleted[i];
+            self.pick(tmp.x, tmp.y, true);
+        }
+
+    };
+
+    this.save = function(){
+        localStorage.setItem("world_data", JSON.stringify(self.data));
+        localStorage.setItem("world_block", JSON.stringify(self.blocks));
+        localStorage.setItem("world_deleted", JSON.stringify(self.deleted));
     };
 
 }

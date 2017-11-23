@@ -55,6 +55,8 @@ function Engine(){
         this.game.state.add(STATES.LOAD, load);
         this.game.state.add(STATES.MENU, menu);
         this.game.state.add(STATES.GAME, game);
+        this.game.state.add(STATES.OPTIONS, options);
+        this.game.state.add(STATES.FACT, cards);
 
         this.game.state.start(STATES.LOAD);
 

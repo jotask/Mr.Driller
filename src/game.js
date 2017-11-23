@@ -10,10 +10,10 @@ var game = {
         this.world = new World();
         this.world.init();
 
-        new Options();
-        new MachineInvestigation();
-        new Shop();
-        new UpgradesMachine();
+        this.opt = new Options();
+        this.inv = new MachineInvestigation();
+        this.shop = new Shop();
+        this.upg = new UpgradesMachine();
 
         this.player = new Player();
         this.player.init();
@@ -21,7 +21,10 @@ var game = {
     },
 
     create: function(){
-
+        this.inv.load();
+        this.shop.load();
+        this.upg.load();
+        this.player.load();
     },
 
     update: function(){
@@ -29,14 +32,22 @@ var game = {
         this.player.update();
     },
 
-    render: function(){
+    render: function() {
 
-        if(engine.game.paused){
+        if (engine.game.paused) {
             engine.game.tweens.update();
             engine.game.particles.update();
         }
 
         engine.game.debug.text(this.game.time.fps, 8, 16, 0x00ff00);
+    },
+
+    shutdown: function(){
+        this.world.save();
+        this.inv.save();
+        this.shop.save();
+        this.upg.save();
+        this.player.save();
     }
 
 };

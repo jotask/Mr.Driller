@@ -39,8 +39,6 @@ function Player(){
         this.facing = "idle";
         this.player.frame = 4;
 
-        this.jumpTimer = 0;
-
     };
 
     this.update = function(){
@@ -99,7 +97,19 @@ function Player(){
         var x = this.player.x + (this.player.width / 2);
         var y = this.player.y + (this.player.height / 2);
         return [x, y];
-    }
+    };
+
+    this.save = function(){
+        self.pickaxe.save();
+        self.money.save();
+        self.inventory.save();
+    };
+
+    this.load = function(){
+        self.pickaxe.load();
+        self.money.load();
+        self.inventory.load();
+    };
 
 }
 

@@ -343,3 +343,29 @@ MachineInvestigation.prototype.openHud = function(_obj){
     */
 
 };
+
+MachineInvestigation.prototype.save = function(){
+    var unlocked = [];
+    for (var dino in Dinosaurs) {
+        if (Dinosaurs.hasOwnProperty(dino)) {
+            if (Dinosaurs.hasOwnProperty(dino)) {
+                var tmp = Dinosaurs[dino];
+                if(tmp.unlocked)
+                    unlocked.push(dino);
+            }
+        }
+    }
+    localStorage.setItem("fact_cards", JSON.stringify(unlocked));
+};
+
+MachineInvestigation.prototype.load = function(){
+    var unlocked = localStorage.getItem("fact_cards");
+    if(unlocked){
+        unlocked = JSON.parse(unlocked);
+        for(var i = 0; i < unlocked.length; i++){
+            if(Dinosaurs.hasOwnProperty(unlocked[i])){
+                Dinosaurs[unlocked[i]].unlocked = true;
+            }
+        }
+    }
+};

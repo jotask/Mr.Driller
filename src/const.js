@@ -5,7 +5,9 @@
 const STATES = {
     LOAD: "load",
     MENU: "menu",
-    GAME: "game"
+    GAME: "game",
+    FACT: "facts",
+    OPTIONS: "options"
 };
 
 const Blocks = {
@@ -33,13 +35,13 @@ const UpgradesItems = {
 };
 
 const Dinosaurs = {
-    ONE: {id: 1, current: 0, price: 100, unlocked: true},
+    ONE: {id: 1, current: 0, price: 100, unlocked: false},
     TWO: {id: 2, current: 0, price: 0, unlocked: false},
     THREE: {id: 3, current: 0, price: 99, unlocked: false},
     FOUR: {id: 4, current: 0, price: 50, unlocked: false},
     FIVE: {id: 5, current: 0, price: 1000, unlocked: false},
     SIX: {id: 6, current: 0, price: 80, unlocked: false},
-    SEVEN: {id: 7, current: 0, price: 100, unlocked: true},
+    SEVEN: {id: 7, current: 0, price: 100, unlocked: false},
     EIGHT: {id: 8,current: 0, price: 100, unlocked: false},
     NINE: {id: 9, current: 0, price: 600, unlocked: false}
 };

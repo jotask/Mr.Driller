@@ -246,3 +246,15 @@ UpgradesMachine.prototype.openHud = function(_obj){
     }
 
 };
+
+UpgradesMachine.prototype.save = function(){
+    localStorage.setItem("upgrade_fuel", UpgradesItems.FUEL.level);
+    localStorage.setItem("upgrade_oxygen", UpgradesItems.OXYGEN.level);
+    localStorage.setItem("upgrade_pickaxe", UpgradesItems.PICKAXE.level);
+};
+
+UpgradesMachine.prototype.load = function(){
+    UpgradesItems.FUEL.level = localStorage.getItem('upgrade_fuel') || 1;
+    UpgradesItems.OXYGEN.level = localStorage.getItem('upgrade_oxygen') || 1;
+    UpgradesItems.PICKAXE.level = localStorage.getItem('upgrade_pickaxe') || 1;
+};

@@ -50,7 +50,7 @@ function Inventory() {
             }
         }
 
-        console.log("something is wrong");
+        console.error("something is wrong");
 
     };
 
@@ -97,6 +97,7 @@ function Inventory() {
 
     };
 
+    /*
     for(var i = 0; i < 100; i++){
         var rnd = Math.round(Math.random() * 10);
 
@@ -119,6 +120,7 @@ function Inventory() {
         var block = new Block(0,0,type);
         this.pickUp(block);
     }
+    */
 
     function showInventory(){
 
@@ -228,6 +230,15 @@ function Inventory() {
         }
 
     }
+
+    this.save = function() {
+        localStorage.setItem("inventory", JSON.stringify(this.items));
+    };
+
+    this.load = function(){
+        var inv = localStorage.getItem("inventory");
+        if(inv) this.items = JSON.parse(inv);
+    };
 
 }
 
